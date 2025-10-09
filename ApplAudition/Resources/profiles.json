@@ -1,0 +1,97 @@
+{
+  "profiles": [
+    {
+      "id": "over-ear-anc",
+      "name": "Over-ear ANC (fermés)",
+      "patterns": [
+        "WH-1000XM",
+        "XM4",
+        "XM5",
+        "QC35",
+        "QuietComfort.*35",
+        "Bose.*700",
+        "QuietComfort.*45",
+        "MDR-1000X",
+        "Momentum.*3.*Wireless",
+        "PX7"
+      ],
+      "sensitivity_db_mw": 103,
+      "impedance_ohm": 47,
+      "constant_c": -15.0,
+      "margin_db": 6
+    },
+    {
+      "id": "on-ear",
+      "name": "On-ear",
+      "patterns": [
+        "Beats.*Solo",
+        "Solo.*3",
+        "Solo.*Pro",
+        "Sennheiser.*Momentum.*On",
+        "PX5",
+        "AKG.*Y50"
+      ],
+      "sensitivity_db_mw": 105,
+      "impedance_ohm": 32,
+      "constant_c": -12.0,
+      "margin_db": 7
+    },
+    {
+      "id": "iem",
+      "name": "IEM (intra-auriculaires)",
+      "patterns": [
+        "AirPods",
+        "Galaxy.*Buds",
+        "Pixel.*Buds",
+        "IEM",
+        "FreeBuds",
+        "Earbuds",
+        "WF-1000XM",
+        "Momentum.*True.*Wireless"
+      ],
+      "sensitivity_db_mw": 108,
+      "impedance_ohm": 16,
+      "constant_c": -8.0,
+      "margin_db": 8
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming headset",
+      "patterns": [
+        "HyperX",
+        "SteelSeries",
+        "Razer",
+        "Logitech.*G",
+        "Astro",
+        "Arctis",
+        "Kraken",
+        "Cloud"
+      ],
+      "sensitivity_db_mw": 100,
+      "impedance_ohm": 32,
+      "constant_c": -14.0,
+      "margin_db": 7
+    },
+    {
+      "id": "studio",
+      "name": "Studio monitoring",
+      "patterns": [
+        "DT.*770",
+        "DT.*880",
+        "DT.*990",
+        "HD.*600",
+        "HD.*650",
+        "HD.*800",
+        "ATH-M50",
+        "ATH-M40",
+        "MDR-7506",
+        "K701",
+        "K702"
+      ],
+      "sensitivity_db_mw": 96,
+      "impedance_ohm": 80,
+      "constant_c": -18.0,
+      "margin_db": 6
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+<Application x:Class="ApplAudition.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ApplAudition.Converters"
+             Startup="OnStartup"
+             Exit="OnExit">
+    <Application.Resources>
+        <!-- Convertisseurs globaux -->
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <converters:ExposureCategoryToBrushConverter x:Key="ExposureCategoryToBrushConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
+        <!-- Ressources globales (thèmes à ajouter plus tard) -->
+    </Application.Resources>
+</Application>
