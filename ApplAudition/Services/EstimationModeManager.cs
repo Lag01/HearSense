@@ -12,7 +12,16 @@ public class EstimationModeManager : IEstimationModeManager
     private readonly ISystemVolumeService _systemVolumeService;
     private readonly ILogger _logger;
 
-    private const float BASE_OFFSET = 120.0f; // Offset calibré pour casques grand public
+    // Seuils pour l'interpolation progressive de l'offset
+    private const float SILENCE_THRESHOLD = -80.0f;      // En dessous = silence absolu (0 dB)
+    private const float LOW_SOUND_THRESHOLD = -40.0f;    // Transition sons faibles → moyens
+    private const float MEDIUM_SOUND_THRESHOLD = -10.0f; // Transition sons moyens → forts
+
+    // Offsets pour chaque zone
+    private const float SILENCE_OFFSET = 80.0f;          // Offset minimum (zone silence)
+    private const float LOW_OFFSET = 100.0f;             // Offset pour sons faibles
+    private const float MEDIUM_OFFSET = 110.0f;          // Offset pour sons moyens
+    private const float HIGH_OFFSET = 120.0f;            // Offset pour sons forts
 
     public EstimationMode CurrentMode => EstimationMode.ModeA; // Toujours Mode A
     public Profile? CurrentProfile => null; // Pas de profils
@@ -35,24 +44,73 @@ public class EstimationModeManager : IEstimationModeManager
     /// </summary>
     public void Initialize()
     {
-        _logger.Information("EstimationModeManager initialisé - Mode A uniquement, offset {Offset} dB", BASE_OFFSET);
+        _logger.Information("EstimationModeManager initialisé - Mode A avec offset dynamique (80-120 dB)");
     }
 
     /// <summary>
-    /// Estime le niveau SPL selon la formule simplifiée.
-    /// Formule : SPL_est = dBFS + volume_système_dB + 120 dB
+    /// Estime le niveau SPL avec offset dynamique adaptatif.
+    /// Formule : SPL_est = dBFS + volume_système_dB + offset_dynamique(dBFS)
+    /// L'offset varie de 80 à 120 dB selon le niveau du signal pour améliorer la précision.
     /// </summary>
     /// <param name="dbfs">Niveau en dBFS</param>
-    /// <returns>SPL estimé en dB(A)</returns>
+    /// <returns>SPL estimé en dB(A), clamped à 0 dB minimum</returns>
     public float EstimateSpl(float dbfs)
     {
+        // Cas spécial : silence absolu (< -80 dBFS)
+        if (dbfs < SILENCE_THRESHOLD)
+        {
+            return 0.0f; // Afficher 0 dB pour le silence complet
+        }
+
         // Récupérer le volume système Windows (en dB)
         float volumeSystemDb = _systemVolumeService.GetVolumeDb();
 
-        // Formule simple : dBFS + volume système + offset de base
-        float splEstimated = dbfs + volumeSystemDb + BASE_OFFSET;
+        // Calculer l'offset dynamique selon le niveau du signal
+        float dynamicOffset = CalculateDynamicOffset(dbfs);
+
+        // Formule adaptative : dBFS + volume système + offset dynamique
+        float splEstimated = dbfs + volumeSystemDb + dynamicOffset;
+
+        // Clamping à 0 dB minimum pour éviter valeurs négatives à l'affichage
+        if (splEstimated < 0.0f)
+        {
+            return 0.0f;
+        }
 
         return splEstimated;
+    }
+
+    /// <summary>
+    /// Calcule un offset dynamique basé sur le niveau dBFS du signal.
+    /// Utilise une interpolation linéaire progressive pour des transitions lisses.
+    /// </summary>
+    /// <param name="dbfs">Niveau en dBFS</param>
+    /// <returns>Offset à ajouter (80 à 120 dB)</returns>
+    private float CalculateDynamicOffset(float dbfs)
+    {
+        // Zone 1 : Sons faibles (-80 à -40 dBFS)
+        // Interpolation linéaire de 80 dB à 100 dB
+        if (dbfs < LOW_SOUND_THRESHOLD)
+        {
+            float ratio = (dbfs - SILENCE_THRESHOLD) / (LOW_SOUND_THRESHOLD - SILENCE_THRESHOLD);
+            ratio = Math.Clamp(ratio, 0.0f, 1.0f); // Sécurité
+            return SILENCE_OFFSET + ratio * (LOW_OFFSET - SILENCE_OFFSET);
+        }
+
+        // Zone 2 : Sons moyens (-40 à -10 dBFS)
+        // Interpolation linéaire de 100 dB à 110 dB
+        if (dbfs < MEDIUM_SOUND_THRESHOLD)
+        {
+            float ratio = (dbfs - LOW_SOUND_THRESHOLD) / (MEDIUM_SOUND_THRESHOLD - LOW_SOUND_THRESHOLD);
+            ratio = Math.Clamp(ratio, 0.0f, 1.0f);
+            return LOW_OFFSET + ratio * (MEDIUM_OFFSET - LOW_OFFSET);
+        }
+
+        // Zone 3 : Sons forts (-10 à 0 dBFS)
+        // Interpolation linéaire de 110 dB à 120 dB
+        float ratioHigh = (dbfs - MEDIUM_SOUND_THRESHOLD) / (0.0f - MEDIUM_SOUND_THRESHOLD);
+        ratioHigh = Math.Clamp(ratioHigh, 0.0f, 1.0f);
+        return MEDIUM_OFFSET + ratioHigh * (HIGH_OFFSET - MEDIUM_OFFSET);
     }
 
     /// <summary>
