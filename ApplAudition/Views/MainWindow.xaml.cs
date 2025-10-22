@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using System.Windows;
+using ApplAudition.Services;
 using ApplAudition.ViewModels;
 
 namespace ApplAudition.Views;
@@ -8,9 +10,44 @@ namespace ApplAudition.Views;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow(MainViewModel viewModel)
+    private readonly MainViewModel _viewModel;
+    private readonly ITrayController _trayController;
+    private readonly ISettingsService _settingsService;
+
+    public MainWindow(MainViewModel viewModel, ITrayController trayController, ISettingsService settingsService)
     {
         InitializeComponent();
         DataContext = viewModel;
+        _viewModel = viewModel;
+        _trayController = trayController;
+        _settingsService = settingsService;
+
+        // Hook événement fermeture pour minimiser vers tray
+        Closing += OnWindowClosing;
+
+        // Initialiser le tray au démarrage (mode normal)
+        _trayController.Initialize(this);
+    }
+
+    /// <summary>
+    /// Gère la fermeture de la fenêtre : minimise vers tray au lieu de quitter.
+    /// </summary>
+    private void OnWindowClosing(object? sender, CancelEventArgs e)
+    {
+        // Vérifier si l'utilisateur veut minimiser vers le tray à la fermeture
+        if (_settingsService.Settings.MinimizeToTrayOnClose)
+        {
+            // Annuler la fermeture et masquer vers le tray
+            e.Cancel = true;
+            Hide();
+
+            // Afficher notification (modération : seulement si première fois?)
+            _trayController.ShowBalloonTip(
+                "Appli Audition",
+                "Application toujours active en arrière-plan. Double-cliquez l'icône pour restaurer.",
+                timeout: 3000
+            );
+        }
+        // Sinon : laisser la fermeture normale (e.Cancel = false par défaut)
     }
 }

@@ -16,4 +16,19 @@ public class AppSettings
     /// Si null, utilise la constante du profil heuristique.
     /// </summary>
     public float? CalibrationConstantC { get; set; }
+
+    /// <summary>
+    /// Indique si l'application doit démarrer automatiquement avec Windows.
+    /// </summary>
+    public bool StartWithWindows { get; set; }
+
+    /// <summary>
+    /// Indique si l'application doit démarrer minimisée dans le system tray.
+    /// </summary>
+    public bool StartMinimized { get; set; }
+
+    /// <summary>
+    /// Indique si la fermeture de la fenêtre minimise vers le tray au lieu de quitter.
+    /// </summary>
+    public bool MinimizeToTrayOnClose { get; set; } = true;
 }

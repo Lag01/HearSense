@@ -11,7 +11,7 @@ namespace ApplAudition;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private ServiceProvider? _serviceProvider;
 
@@ -58,6 +58,10 @@ public partial class App : Application
         // Service de volume système (correction calculs SPL)
         services.AddSingleton<ISystemVolumeService, SystemVolumeService>();
 
+        // System Tray et auto-démarrage
+        services.AddSingleton<ITrayController, TrayController>();
+        services.AddSingleton<IStartupManager, StartupManager>();
+
         // ViewModels (Transient - nouvelle instance à chaque résolution)
         services.AddTransient<MainViewModel>();
         services.AddTransient<CalibrationViewModel>(); // Phase 8 : Calibration
@@ -80,9 +84,28 @@ public partial class App : Application
         // Initialiser les services requis
         await InitializeServicesAsync();
 
-        // Afficher la fenêtre principale
+        // Récupérer la fenêtre principale
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-        mainWindow.Show();
+
+        // Vérifier si l'argument --minimized est présent
+        var settingsService = _serviceProvider.GetRequiredService<ISettingsService>();
+        bool startMinimized = e.Args.Contains("--minimized") || settingsService.Settings.StartMinimized;
+
+        if (startMinimized)
+        {
+            // Démarrage minimisé : initialiser le tray sans afficher la fenêtre
+            var trayController = _serviceProvider.GetRequiredService<ITrayController>();
+            trayController.Initialize(mainWindow);
+
+            Log.Information("Application démarrée en mode minimisé (system tray)");
+            // Ne pas appeler mainWindow.Show()
+        }
+        else
+        {
+            // Démarrage normal : afficher la fenêtre
+            mainWindow.Show();
+            Log.Information("Application démarrée en mode normal (fenêtre visible)");
+        }
     }
 
     /// <summary>
@@ -162,6 +185,17 @@ public partial class App : Application
     private void OnExit(object sender, ExitEventArgs e)
     {
         Log.Information("Application ApplAudition fermée");
+
+        // Disposer le TrayController avant les autres services (évite icône fantôme)
+        try
+        {
+            var trayController = _serviceProvider?.GetService<ITrayController>();
+            trayController?.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Erreur lors du dispose du TrayController");
+        }
 
         // Disposer les services
         _serviceProvider?.Dispose();

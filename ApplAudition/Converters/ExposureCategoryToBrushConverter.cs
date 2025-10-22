@@ -14,14 +14,14 @@ public class ExposureCategoryToBrushConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is not ExposureCategory category)
-            return Brushes.Gray;
+            return System.Windows.Media.Brushes.Gray;
 
         return category switch
         {
-            ExposureCategory.Safe => new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Vert Material Design
-            ExposureCategory.Moderate => new SolidColorBrush(Color.FromRgb(255, 152, 0)), // Orange Material Design
-            ExposureCategory.Hazardous => new SolidColorBrush(Color.FromRgb(244, 67, 54)), // Rouge Material Design
-            _ => Brushes.Gray
+            ExposureCategory.Safe => new SolidColorBrush(System.Windows.Media.Color.FromRgb(76, 175, 80)), // Vert Material Design
+            ExposureCategory.Moderate => new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 152, 0)), // Orange Material Design
+            ExposureCategory.Hazardous => new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 67, 54)), // Rouge Material Design
+            _ => System.Windows.Media.Brushes.Gray
         };
     }
 

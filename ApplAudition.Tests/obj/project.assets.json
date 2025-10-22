@@ -2354,7 +2354,7 @@
           "bin/placeholder/ApplAudition.dll": {}
         },
         "frameworkReferences": [
-          "Microsoft.WindowsDesktop.App.WPF"
+          "Microsoft.WindowsDesktop.App"
         ]
       }
     }

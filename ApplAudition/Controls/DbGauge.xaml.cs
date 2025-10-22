@@ -8,7 +8,7 @@ namespace ApplAudition.Controls;
 /// <summary>
 /// UserControl représentant une jauge visuelle dB(A) avec code couleur (Phase 6 - Tâche 14).
 /// </summary>
-public partial class DbGauge : UserControl
+public partial class DbGauge : System.Windows.Controls.UserControl
 {
     #region Dependency Properties
 
@@ -75,7 +75,7 @@ public partial class DbGauge : UserControl
         DependencyProperty.Register(nameof(CategoryText), typeof(string), typeof(DbGauge), new PropertyMetadata("--"));
 
     public static readonly DependencyProperty CategoryBrushProperty =
-        DependencyProperty.Register(nameof(CategoryBrush), typeof(Brush), typeof(DbGauge), new PropertyMetadata(Brushes.Gray));
+        DependencyProperty.Register(nameof(CategoryBrush), typeof(System.Windows.Media.Brush), typeof(DbGauge), new PropertyMetadata(System.Windows.Media.Brushes.Gray));
 
     public static readonly DependencyProperty GaugeWidthProperty =
         DependencyProperty.Register(nameof(GaugeWidth), typeof(double), typeof(DbGauge), new PropertyMetadata(0.0));
@@ -92,9 +92,9 @@ public partial class DbGauge : UserControl
         set => SetValue(CategoryTextProperty, value);
     }
 
-    public Brush CategoryBrush
+    public System.Windows.Media.Brush CategoryBrush
     {
-        get => (Brush)GetValue(CategoryBrushProperty);
+        get => (System.Windows.Media.Brush)GetValue(CategoryBrushProperty);
         set => SetValue(CategoryBrushProperty, value);
     }
 
@@ -156,11 +156,11 @@ public partial class DbGauge : UserControl
 
         CategoryBrush = Category switch
         {
-            ExposureCategory.Safe => new SolidColorBrush(Color.FromRgb(76, 175, 80)),      // Vert
-            ExposureCategory.Moderate => new SolidColorBrush(Color.FromRgb(255, 152, 0)),  // Orange
-            ExposureCategory.Hazardous => new SolidColorBrush(Color.FromRgb(244, 67, 54)), // Rouge
-            ExposureCategory.Critical => new SolidColorBrush(Color.FromRgb(183, 28, 28)),  // Rouge très foncé
-            _ => Brushes.Gray
+            ExposureCategory.Safe => new SolidColorBrush(System.Windows.Media.Color.FromRgb(76, 175, 80)),      // Vert
+            ExposureCategory.Moderate => new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 152, 0)),  // Orange
+            ExposureCategory.Hazardous => new SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 67, 54)), // Rouge
+            ExposureCategory.Critical => new SolidColorBrush(System.Windows.Media.Color.FromRgb(183, 28, 28)),  // Rouge très foncé
+            _ => System.Windows.Media.Brushes.Gray
         };
     }
 }

@@ -133,3 +133,4 @@ C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.pdb
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.genruntimeconfig.cache
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ref\ApplAudition.Tests.dll
+C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.sourcelink.json

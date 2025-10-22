@@ -53,3 +53,4 @@ C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windo
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ApplAudition.pdb
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ApplAudition.genruntimeconfig.cache
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ref\ApplAudition.dll
+C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ApplAudition.sourcelink.json

@@ -21,7 +21,9 @@
       "Bash(dotnet test:*)",
       "Bash(dotnet run:*)",
       "Bash(timeout:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(git checkout -b feature/tray-startup)",
+      "Bash(git add -A)"
     ],
     "deny": [],
     "ask": []
