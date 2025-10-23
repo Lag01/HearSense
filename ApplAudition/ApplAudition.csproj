@@ -8,6 +8,10 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <LangVersion>12</LangVersion>
+
+    <!-- Configuration de l'icône de l'application -->
+    <!-- Décommentez cette ligne après avoir placé votre fichier app.ico dans le dossier Resources/ -->
+    <!-- <ApplicationIcon>Resources\app.ico</ApplicationIcon> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +21,11 @@
     <PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Inclure l'icône comme ressource intégrée -->
+  <ItemGroup>
+    <Resource Include="Resources\app.ico" />
   </ItemGroup>
 
 </Project>

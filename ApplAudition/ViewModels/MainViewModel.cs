@@ -64,6 +64,11 @@ public partial class MainViewModel : BaseViewModel
     public ObservableCollection<DataPoint> HistoryData { get; } = new();
 
     /// <summary>
+    /// Collection observable pour les points LiveCharts2.
+    /// </summary>
+    private ObservableCollection<ObservablePoint> _chartValues = new();
+
+    /// <summary>
     /// Collection observable pour l'export CSV (Phase 9 - Tâche 21).
     /// Contient toutes les données complètes (dBFS, dB(A), Leq, Peak, Mode, Profile).
     /// </summary>
@@ -72,13 +77,17 @@ public partial class MainViewModel : BaseViewModel
     /// <summary>
     /// Série LiveCharts2 pour le graphe dB(A) (Phase 6 - Tâche 15).
     /// </summary>
-    public ISeries[] Series { get; set; } = null!;
+    [ObservableProperty]
+    private ISeries[] _series = null!;
 
     /// <summary>
     /// Axes X et Y pour le graphe (Phase 6 - Tâche 15).
     /// </summary>
-    public Axis[] XAxes { get; set; } = null!;
-    public Axis[] YAxes { get; set; } = null!;
+    [ObservableProperty]
+    private Axis[] _xAxes = null!;
+
+    [ObservableProperty]
+    private Axis[] _yAxes = null!;
 
     [ObservableProperty]
     private bool _isSpeakerDetected = false;
@@ -165,12 +174,7 @@ public partial class MainViewModel : BaseViewModel
             _captureStartTime = DateTime.Now;
             HistoryData.Clear();
             ExportHistoryData.Clear();
-
-            // Vider le graphe LiveCharts2
-            if (Series[0] is LineSeries<ObservablePoint> lineSeries)
-            {
-                lineSeries.Values = new ObservableCollection<ObservablePoint>();
-            }
+            _chartValues.Clear(); // Vider le graphe LiveCharts2
 
             _uiRefreshTimer.Start();
 
@@ -188,17 +192,22 @@ public partial class MainViewModel : BaseViewModel
     /// </summary>
     private void InitializeChart()
     {
+        // Initialiser la collection des valeurs du graphe
+        _chartValues = new ObservableCollection<ObservablePoint>();
+
         // Configuration de la série LineSeries pour dB(A)
         Series = new ISeries[]
         {
             new LineSeries<ObservablePoint>
             {
                 Name = "dB(A)",
-                Values = new ObservableCollection<ObservablePoint>(),
+                Values = _chartValues, // Utiliser la collection observable persistante
                 Stroke = new SolidColorPaint(SkiaSharp.SKColors.DodgerBlue, 2),
                 Fill = null, // Pas de remplissage sous la courbe
                 GeometrySize = 0, // Pas de points visibles (ligne continue)
-                LineSmoothness = 0 // Ligne droite (pas de lissage)
+                LineSmoothness = 0.2, // Légère courbe pour un rendu plus fluide
+                GeometryStroke = null,
+                GeometryFill = null
             }
         };
 
@@ -211,7 +220,9 @@ public partial class MainViewModel : BaseViewModel
                 NameTextSize = 12,
                 TextSize = 10,
                 MinLimit = 0,
-                MaxLimit = 180 // 3 minutes = 180 secondes
+                MaxLimit = 180, // 3 minutes = 180 secondes
+                ForceStepToMin = false,
+                MinStep = 10
             }
         };
 
@@ -224,9 +235,12 @@ public partial class MainViewModel : BaseViewModel
                 NameTextSize = 12,
                 TextSize = 10,
                 MinLimit = 0,
-                MaxLimit = 120
+                MaxLimit = 120,
+                ForceStepToMin = false
             }
         };
+
+        _logger.Information("Graphe LiveCharts2 initialisé avec succès");
     }
 
     #region Commandes
@@ -455,23 +469,26 @@ public partial class MainViewModel : BaseViewModel
         ExportHistoryData.Add(exportDataPoint);
 
         // Ajouter le point au graphe LiveCharts2 (Phase 6 - Tâche 15)
-        if (Series[0] is LineSeries<ObservablePoint> lineSeries)
+        _chartValues.Add(new ObservablePoint(elapsedSeconds, dbAValue));
+
+        // Log périodique pour debugging (tous les 50 points)
+        if (_chartValues.Count % 50 == 0)
         {
-            var values = lineSeries.Values as ObservableCollection<ObservablePoint>;
-            values?.Add(new ObservablePoint(elapsedSeconds, dbAValue));
+            _logger.Debug("Graphe LiveCharts2: {Count} points, dernier point: ({X:F1}s, {Y:F1} dB(A))",
+                _chartValues.Count, elapsedSeconds, dbAValue);
+        }
 
-            // Buffer circulaire : supprimer les points les plus anciens si dépassement
-            while (values != null && values.Count > MAX_HISTORY_POINTS)
-            {
-                values.RemoveAt(0);
-            }
+        // Buffer circulaire : supprimer les points les plus anciens si dépassement
+        while (_chartValues.Count > MAX_HISTORY_POINTS)
+        {
+            _chartValues.RemoveAt(0);
+        }
 
-            // Ajuster l'axe X si le temps dépasse 3 minutes (scroll automatique)
-            if (elapsedSeconds > 180)
-            {
-                XAxes[0].MinLimit = elapsedSeconds - 180;
-                XAxes[0].MaxLimit = elapsedSeconds;
-            }
+        // Ajuster l'axe X si le temps dépasse 3 minutes (scroll automatique)
+        if (elapsedSeconds > 180)
+        {
+            XAxes[0].MinLimit = elapsedSeconds - 180;
+            XAxes[0].MaxLimit = elapsedSeconds;
         }
 
         // Buffer circulaire pour l'historique interne

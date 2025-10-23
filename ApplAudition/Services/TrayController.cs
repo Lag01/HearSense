@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -50,9 +51,7 @@ public class TrayController : ITrayController
         // Créer l'icône NotifyIcon
         _notifyIcon = new NotifyIcon
         {
-            // Utiliser icône système par défaut (temporaire)
-            // TODO: Remplacer par icône custom Resources/Icons/tray-icon.ico
-            Icon = SystemIcons.Application,
+            Icon = LoadAppIcon(), // Charger icône personnalisée depuis Resources
             Text = "Appli Audition",
             Visible = true
         };
@@ -353,6 +352,34 @@ public class TrayController : ITrayController
         {
             Application.Current.Shutdown();
         });
+    }
+
+    /// <summary>
+    /// Charge l'icône de l'application depuis les ressources.
+    /// </summary>
+    private Icon LoadAppIcon()
+    {
+        try
+        {
+            // Chemin vers l'icône dans le projet
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "app.ico");
+
+            if (File.Exists(iconPath))
+            {
+                _logger.Debug("Icône trouvée : {IconPath}", iconPath);
+                return new Icon(iconPath);
+            }
+            else
+            {
+                _logger.Warning("Icône introuvable à {IconPath}, utilisation de l'icône système", iconPath);
+                return SystemIcons.Application;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(ex, "Erreur lors du chargement de l'icône personnalisée, utilisation de l'icône système");
+            return SystemIcons.Application;
+        }
     }
 
     /// <summary>

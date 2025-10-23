@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using ApplAudition.Models;
 
 namespace ApplAudition.Controls;
@@ -128,7 +129,7 @@ public partial class DbGauge : System.Windows.Controls.UserControl
     }
 
     /// <summary>
-    /// Met à jour la jauge visuelle (largeur, texte).
+    /// Met à jour la jauge visuelle (largeur, texte) avec animation fluide.
     /// </summary>
     private void UpdateGauge()
     {
@@ -137,7 +138,17 @@ public partial class DbGauge : System.Windows.Controls.UserControl
         // Calculer largeur de la barre (échelle 0-120 dB(A) → 0-350px)
         // Avec clamp pour éviter dépassement
         double normalizedValue = Math.Clamp(Value, 0, 120);
-        GaugeWidth = (normalizedValue / 120.0) * 350;
+        double targetWidth = (normalizedValue / 120.0) * 350;
+
+        // Animation fluide pour la largeur de la barre
+        var animation = new DoubleAnimation
+        {
+            To = targetWidth,
+            Duration = TimeSpan.FromMilliseconds(250), // 250ms pour une transition fluide
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        };
+
+        BeginAnimation(GaugeWidthProperty, animation);
     }
 
     /// <summary>
