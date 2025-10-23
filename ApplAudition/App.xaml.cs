@@ -62,12 +62,19 @@ public partial class App : System.Windows.Application
         services.AddSingleton<ITrayController, TrayController>();
         services.AddSingleton<IStartupManager, StartupManager>();
 
+        // Notifications
+        services.AddSingleton<INotificationManager, NotificationManager>();
+
         // ViewModels (Transient - nouvelle instance à chaque résolution)
         services.AddTransient<MainViewModel>();
         services.AddTransient<CalibrationViewModel>(); // Phase 8 : Calibration
+        services.AddTransient<SettingsViewModel>(); // Fenêtre de paramètres
+        services.AddTransient<TrayPopupViewModel>(); // Popup tray
 
         // Views (Singleton - fenêtre principale unique)
         services.AddSingleton<MainWindow>();
+        services.AddTransient<SettingsWindow>(); // Fenêtre de paramètres (transient pour nouvelle instance à chaque ouverture)
+        services.AddTransient<TrayPopup>(); // Popup tray (transient pour nouvelle instance)
     }
 
     /// <summary>
@@ -87,16 +94,24 @@ public partial class App : System.Windows.Application
         // Récupérer la fenêtre principale
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
 
+        // Configurer le TrayController
+        var trayController = _serviceProvider.GetRequiredService<ITrayController>();
+        trayController.Initialize(mainWindow);
+
+        // Configurer le callback pour ouvrir les paramètres depuis le menu tray
+        trayController.SetSettingsCallback(() =>
+        {
+            var settingsWindow = _serviceProvider.GetRequiredService<SettingsWindow>();
+            settingsWindow.ShowDialog(); // Modal
+        });
+
         // Vérifier si l'argument --minimized est présent
         var settingsService = _serviceProvider.GetRequiredService<ISettingsService>();
         bool startMinimized = e.Args.Contains("--minimized") || settingsService.Settings.StartMinimized;
 
         if (startMinimized)
         {
-            // Démarrage minimisé : initialiser le tray sans afficher la fenêtre
-            var trayController = _serviceProvider.GetRequiredService<ITrayController>();
-            trayController.Initialize(mainWindow);
-
+            // Démarrage minimisé : ne pas afficher la fenêtre
             Log.Information("Application démarrée en mode minimisé (system tray)");
             // Ne pas appeler mainWindow.Show()
         }

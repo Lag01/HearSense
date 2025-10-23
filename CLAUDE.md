@@ -89,10 +89,9 @@ Où :
 2. [Glossaire technique](#glossaire-technique)
 3. [Architecture système](#architecture-système)
 4. [Stack technique](#stack-technique)
-5. [Modes d'estimation](#modes-destimation)
-6. [Pipeline DSP](#pipeline-dsp)
-7. [Conventions](#conventions)
-8. [Plan d'implémentation (28 tâches)](#plan-dimplémentation)
+5. [Pipeline DSP](#pipeline-dsp)
+6. [Conventions](#conventions)
+7. [Plan d'implémentation (21 tâches)](#plan-dimplémentation)
 
 ---
 
@@ -104,15 +103,14 @@ L'exposition prolongée à des niveaux sonores élevés (> 85 dB(A)) peut causer
 ### Objectif du projet
 Créer une application Windows qui **estime en temps réel** le niveau sonore dB(A) au casque à partir du signal audio système (WASAPI loopback), **sans exiger de saisie utilisateur par défaut**.
 
-### Philosophie "Zero-Input Conservateur"
+### Philosophie "Simple et Conservateur"
 - **Priorité 1**: Fonctionner immédiatement sans configuration
-- **Priorité 2**: Sur-estimer modérément pour la sécurité (biais +3 à +6 dB)
-- **Priorité 3**: Améliorer la précision progressivement (profils heuristiques, calibration optionnelle)
+- **Priorité 2**: Sur-estimer modérément pour la sécurité (biais conservateur)
+- **Priorité 3**: Permettre la personnalisation des seuils de notification
 
 ### Cas d'usage
-1. **Utilisateur lambda** : Lance l'app, obtient une indication visuelle (vert/orange/rouge) du niveau d'exposition relatif
-2. **Utilisateur avec casque reconnu** : L'app détecte "Sony WH-1000XM4" → affiche estimation SPL absolue (±6 dB)
-3. **Utilisateur exigeant** : Calibre avec un sonomètre → précision optimale pour son setup
+1. **Utilisateur lambda** : Lance l'app, obtient une indication visuelle (vert/orange/rouge) du niveau d'exposition en dB(A)
+2. **Utilisateur avancé** : Peut personnaliser les seuils de notification selon ses préférences
 
 ### Ce que l'app N'EST PAS
 - ❌ Un sonomètre médical certifié
@@ -135,15 +133,6 @@ Créer une application Windows qui **estime en temps réel** le niveau sonore dB
 | **Leq (Equivalent Continuous Level)** | Niveau équivalent continu. Moyenne logarithmique de l'énergie sur une période : Leq = 10·log10(mean(10^(Li/10))). Norme pour exposition sonore. |
 | **Fenêtre de Hann** | Fonction de pondération pour réduire les artefacts spectraux : w[n] = 0.5·(1 - cos(2πn/(N-1))). Appliquée avant calcul RMS. |
 | **Biquad** | Filtre IIR (Infinite Impulse Response) du 2ème ordre. Forme : y[n] = b0·x[n] + b1·x[n-1] + b2·x[n-2] - a1·y[n-1] - a2·y[n-2]. |
-
-### Estimation SPL
-
-| Terme | Définition |
-|-------|-----------|
-| **Constante C** | Offset de calibration pour convertir dBFS → SPL : SPL_est = dBFS + C. Dépend du casque (sensibilité, impédance) et du volume système. |
-| **Sensibilité (dB/mW)** | Niveau SPL produit par 1 mW de puissance (spec casque). Ex: 103 dB/mW pour Sony WH-1000XM4. |
-| **Impédance (Ω)** | Résistance électrique du casque (ex: 47Ω). Influence la puissance reçue pour une tension donnée. |
-| **Profil heuristique** | Ensemble de paramètres génériques pour une catégorie de casques (over-ear ANC, IEM, on-ear) permettant une estimation sans specs exactes. |
 
 ### Normes & Santé
 
@@ -256,63 +245,6 @@ Créer une application Windows qui **estime en temps réel** le niveau sonore dB
 
 ---
 
-## Modes d'estimation
-
-### Tableau comparatif
-
-| Aspect | Mode A (Zero-Input) | Mode B (Auto-profil) |
-|--------|---------------------|----------------------|
-| **Activation** | Par défaut (toujours disponible) | Si périphérique reconnu (patterns JSON) |
-| **Affichage** | dB(A) **relatif** (pas de SPL absolu) | SPL estimé (dB(A) absolu) avec marge |
-| **Catégories** | Vert/Orange/Rouge (seuils relatifs) | Vert/Orange/Rouge (seuils absolus) |
-| **Calibration** | Constante C = 0 (référence numérique) | C = profil heuristique (ex: -15 dB) |
-| **Avertissement** | "Estimation conservatrice du signal" | "Estimation heuristique, marge ±6 dB" |
-| **Précision** | N/A (valeur relative) | ±5-8 dB typique |
-| **Override** | - | Bouton "Forcer Mode A" disponible |
-
-### Arbre de décision (au démarrage)
-
-```
-Démarrage
-   │
-   ├──> Détecter périphérique audio actif
-   │         │
-   │         ├──> Nom trouvé (ex: "Sony WH-1000XM4")
-   │         │         │
-   │         │         ├──> Matching patterns JSON
-   │         │         │         │
-   │         │         │         ├──> Match trouvé ("over-ear-anc")
-   │         │         │         │         │
-   │         │         │         │         └──> Mode B
-   │         │         │         │              C = -15.0 dB
-   │         │         │         │              Afficher profil + marge
-   │         │         │         │
-   │         │         │         └──> Aucun match
-   │         │         │                   │
-   │         │         │                   └──> Type = Bluetooth ?
-   │         │         │                             │
-   │         │         │                             ├─ OUI ──> Mode B générique
-   │         │         │                             │          C = -12.0 dB (conservateur)
-   │         │         │                             │
-   │         │         │                             └─ NON ──> Mode A
-   │         │         │
-   │         │         └──> Nom = "Haut-parleurs" ou "Speakers"
-   │         │                   │
-   │         │                   └──> Mode A (pas pertinent pour casque)
-   │         │
-   │         └──> Erreur détection
-   │                   │
-   │                   └──> Mode A (fallback sécurisé)
-   │
-   └──> Utilisateur force Mode A manuellement
-             │
-             └──> Mode A (ignore profil)
-```
-
-**Note** : La constante C convertit dBFS → SPL (typiquement +95 dB). Elle englobe sensibilité casque + impédance, mais pas le volume système (inaccessible). D'où la nécessité de calibration pour précision absolue.
-
----
-
 ## Pipeline DSP
 
 **Étapes** (125 ms = 6000 samples @ 48kHz):
@@ -323,13 +255,11 @@ Démarrage
 5. dBFS: `20·log10(RMS)` (clamp à -120 si silence)
 6. Leq_1min: buffer circulaire 480 échantillons, `Leq = 10·log10(mean(10^(Li/10)))`
 7. Pic: max(buffer circulaire)
-8. SPL_est (Mode B): `dBFS + C`
-9. Catégories: Safe < 70, Moderate 70-80, Hazardous > 80 dB(A)
+8. Catégories: Safe < 70, Moderate 70-80, Hazardous > 80 dB(A)
 
 **Formules clés**:
 - **RMS**: `sqrt(Σ(x²)/N)`
 - **dBFS**: `20·log10(RMS)`
-- **SPL estimé**: `dBFS + C`
 - **Leq**: `10·log10(mean(10^(Li/10)))`
 - **Fenêtre Hann**: `0.5·(1 - cos(2πn/(N-1)))`
 - **Pondération A**: IEC 61672:2003 (1kHz = 0dB, 100Hz ≈ -20dB, 10kHz ≈ -4dB)
@@ -545,155 +475,7 @@ Démarrage
 
 ---
 
-## Phase 4: Système de profils heuristiques
-
-### Tâche 8: Détection nom périphérique audio
-**Objectif**: Récupérer le nom du périphérique de sortie actif
-
-**À faire**:
-- Créer `AudioDeviceService`
-- Utiliser NAudio.CoreAudioApi.MMDeviceEnumerator
-- Récupérer nom friendly du périphérique actif (loopback)
-- Détecter changements de périphérique (événement)
-- Exposer: DeviceName, DeviceType (Bluetooth/USB/WDM)
-
-**Points techniques**:
-```csharp
-// MMDeviceEnumerator → GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia)
-// device.FriendlyName → "Sony WH-1000XM4"
-```
-
-**Dépendances**: Tâche 2
-
-**Critères de validation**:
-- Nom périphérique correct
-- Détection changement fonctionne
-- Types identifiés
-
----
-
-### Tâche 9: Structure JSON profils heuristiques
-**Objectif**: Définir base de profils embarquée
-
-**À faire**:
-- Créer fichier `profiles.json` (embedded resource)
-- Structure JSON:
-```json
-{
-  "profiles": [
-    {
-      "id": "over-ear-anc",
-      "name": "Over-ear ANC (fermés)",
-      "patterns": ["WH-1000XM", "QC35", "XM4", "XM5", "Bose.*700"],
-      "sensitivity_db_mw": 103,
-      "impedance_ohm": 47,
-      "constant_c": -15.0,
-      "margin_db": 6
-    },
-    {
-      "id": "on-ear",
-      "name": "On-ear",
-      "patterns": ["Beats Solo", "Sennheiser.*Momentum.*On"],
-      "constant_c": -12.0,
-      "margin_db": 7
-    },
-    {
-      "id": "iem",
-      "name": "IEM (intra-auriculaires)",
-      "patterns": ["AirPods", "Galaxy Buds", "IEM"],
-      "constant_c": -8.0,
-      "margin_db": 8
-    }
-  ]
-}
-```
-- Créer classes C# correspondantes (Profile, ProfileDatabase)
-
-**Dépendances**: Tâche 8
-
-**Critères de validation**:
-- JSON bien formé
-- Désérialisation fonctionnelle
-- Profils chargés au démarrage
-
----
-
-### Tâche 10: Moteur de mapping (regex, règles)
-**Objectif**: Associer périphérique → profil automatiquement
-
-**À faire**:
-- Créer `ProfileMatcher` service
-- Méthode `MatchProfile(string deviceName)` → Profile?
-- Parcourir patterns (regex) pour trouver match
-- Fallback: si type=Bluetooth → "over-ear-anc" générique
-- Si aucun match → null (rester en Mode A)
-- Logs pour debugging (quel profil sélectionné)
-
-**Points techniques**:
-```csharp
-// Regex.IsMatch(deviceName, pattern, RegexOptions.IgnoreCase)
-// Ordre: exact match > generic match > null
-```
-
-**Dépendances**: Tâche 9
-
-**Critères de validation**:
-- Matching correct pour périphériques connus
-- Fallback fonctionne
-- Logs clairs
-
----
-
-## Phase 5: Mode B - Auto-profil Heuristique
-
-### Tâche 11: Calcul SPL estimé (20·log10 + C)
-**Objectif**: Convertir dBFS en SPL absolu estimé
-
-**À faire**:
-- Méthode `EstimateSpl(float dbfs, float constantC)` → float
-- Formule: SPL_est (dB(A)) = 20 * log10(A_rms) + C
-- Où A_rms = RMS pondéré A
-- C = constante du profil
-- Valider cohérence (50-120 dB(A) typique)
-
-**Points techniques**:
-```csharp
-// A_rms déjà calculé via pondération A
-// dbfs = 20*log10(A_rms)
-// SPL_est = dbfs + C
-```
-
-**Dépendances**: Tâche 5, Tâche 10
-
-**Critères de validation**:
-- SPL estimé cohérent
-- Tests avec différents C
-- Plage réaliste
-
----
-
-### Tâche 12: Sélection automatique profil + constante C
-**Objectif**: Passer en Mode B quand profil détecté
-
-**À faire**:
-- Créer `EstimationModeManager` service
-- États: ModeA (zero-input), ModeB (auto-profil)
-- Au démarrage: tenter matching profil
-- Si match → Mode B, utiliser C du profil
-- Sinon → Mode A
-- UI: badge "Mode actif: A" ou "Mode B (Auto-profil)"
-- Avertissement: "⚠ estimation heuristique, marge ±(5–8) dB"
-
-**Dépendances**: Tâche 11
-
-**Critères de validation**:
-- Switch automatique A↔B
-- Avertissement affiché
-- C appliquée correctement
-
----
-
-## Phase 6: UI de base
+## Phase 4: UI de base
 
 ### Tâche 13: Vue principale + MVVM binding
 **Objectif**: Structure UI principale
@@ -770,7 +552,7 @@ Démarrage
 
 ---
 
-## Phase 7: UI avancée
+## Phase 5: UI avancée
 
 ### Tâche 16: Panneau "Mode actif" et badges
 **Objectif**: Indiquer mode d'estimation actif
@@ -833,48 +615,7 @@ Démarrage
 
 ---
 
-## Phase 8: Calibration (optionnelle)
-
-### Tâche 19: UI calibration
-**Objectif**: Panneau pour ajuster C manuellement
-
-**À faire**:
-- Section "Calibration" (optionnelle, collapsible)
-- Expander ou page séparée
-- Instructions: "Utiliser un sonomètre de référence"
-- Input: SPL mesuré (dB(A)), SPL estimé actuel
-- Bouton "Calibrer" → ajuste C
-- Formule: C_new = C_old + (SPL_mesuré - SPL_estimé)
-- Sauvegarder C_calibrated dans settings
-
-**Dépendances**: Tâche 18
-
-**Critères de validation**:
-- UI calibration accessible
-- Instructions claires
-- Calibration fonctionne
-
----
-
-### Tâche 20: Ajustement constante C
-**Objectif**: Appliquer C calibrée dans calculs
-
-**À faire**:
-- Si C_calibrated existe → utiliser à la place de C profil
-- Badge "Calibré" dans UI
-- Possibilité de reset (retour à C heuristique)
-- Avertissement: "Calibration valide seulement pour ce périphérique + volume système"
-
-**Dépendances**: Tâche 19
-
-**Critères de validation**:
-- C calibrée prioritaire
-- Badge affiché
-- Reset fonctionne
-
----
-
-## Phase 9: Export & Logging
+## Phase 6: Export & Logging
 
 ### Tâche 21: Export CSV (timestamp, dBFS, dB(A), Leq, mode)
 **Objectif**: Exporter historique vers CSV
@@ -922,7 +663,7 @@ Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile
 
 ---
 
-## Phase 10: Tests & Qualité
+## Phase 7: Tests & Qualité
 
 ### Tâche 23: Tests unitaires DSP (RMS, dBFS, biquad A, Leq)
 **Objectif**: Valider calculs DSP
@@ -998,7 +739,7 @@ Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile
 
 ---
 
-## Phase 11: Packaging & Documentation
+## Phase 8: Packaging & Documentation
 
 ### Tâche 26: Configuration MSIX
 **Objectif**: Créer installer Windows
@@ -1121,7 +862,7 @@ Phase 10 (Tests) → Phase 11 (Packaging & Doc)
 
 ---
 
-## Progression (à mettre à jour)
+## Progression
 
 - [x] Phase 1: Infrastructure (2/2) ✅ **COMPLÉTÉE** - 2025-10-07
   - [x] Tâche 1: Setup projet .NET 8 WPF + MVVM
@@ -1130,40 +871,30 @@ Phase 10 (Tests) → Phase 11 (Packaging & Doc)
   - [x] Tâche 3: Implémentation calcul RMS et dBFS
   - [x] Tâche 4: Implémentation filtre pondération A (biquad)
   - [x] Tâche 5: Calcul Leq_1min (moyenne énergétique glissante)
-- [x] Phase 3: Mode A (2/2) ✅ **COMPLÉTÉE** - 2025-10-08
+- [x] Phase 3: Catégorisation (2/2) ✅ **COMPLÉTÉE** - 2025-10-08
   - [x] Tâche 6: Système de catégorisation (Vert/Orange/Rouge)
   - [x] Tâche 7: Biais de sécurité (+3 à +6 dB)
-- [x] Phase 4: Profils (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
-  - [x] Tâche 8: Détection nom périphérique audio
-  - [x] Tâche 9: Structure JSON profils heuristiques
-  - [x] Tâche 10: Moteur de mapping (regex, règles)
-- [x] Phase 5: Mode B (2/2) ✅ **COMPLÉTÉE** - 2025-10-08
-  - [x] Tâche 11: Calcul SPL estimé (20·log10 + C)
-  - [x] Tâche 12: Sélection automatique profil + constante C
-- [x] Phase 6: UI base (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
+- [x] Phase 4: UI base (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
   - [x] Tâche 13: Vue principale + MVVM binding
   - [x] Tâche 14: Jauge dB(A) avec code couleur
   - [x] Tâche 15: Graphe historique (LiveCharts2)
-- [x] Phase 7: UI avancée (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
-  - [x] Tâche 16: Panneau "Mode actif" et badges
-  - [x] Tâche 17: Panneau "Profil détecté"
+- [x] Phase 5: UI avancée (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
+  - [x] Tâche 16: Interface utilisateur avancée
+  - [x] Tâche 17: Seuils personnalisables
   - [x] Tâche 18: Dark mode + persistance settings
-- [x] Phase 8: Calibration (2/2) ✅ **COMPLÉTÉE** - 2025-10-08
-  - [x] Tâche 19: UI calibration (CalibrationViewModel + interface)
-  - [x] Tâche 20: Ajustement constante C (calibration personnalisée)
-- [x] Phase 9: Export & Logging (2/2) ✅ **COMPLÉTÉE** - 2025-10-08
+- [x] Phase 6: Export & Logging (2/2) ✅ **COMPLÉTÉE** - 2025-10-08
   - [x] Tâche 21: Export CSV (ExportService + commande UI)
   - [x] Tâche 22: Système de logging (Serilog configuré)
-- [x] Phase 10: Tests & Qualité (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
+- [x] Phase 7: Tests & Qualité (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
   - [x] Tâche 23: Tests unitaires DSP (DspEngine, AWeighting, Leq)
-  - [x] Tâche 24: Tests système de profils (ProfileMatcher, EstimationModeManager)
+  - [x] Tâche 24: Tests système
   - [x] Tâche 25: Tests performance CPU (PerformanceTests)
-- [x] Phase 11: Packaging & Documentation (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
+- [x] Phase 8: Packaging & Documentation (3/3) ✅ **COMPLÉTÉE** - 2025-10-08
   - [x] Tâche 26: Configuration MSIX (templates et documentation)
   - [x] Tâche 27: Build portable .zip (script PowerShell + README)
   - [x] Tâche 28: README complet (documentation utilisateur exhaustive)
 
-**Total**: 28/28 tâches complétées (100%) 🎉
+**Total**: 21/21 tâches complétées (100%) 🎉
 
 ---
 
@@ -1180,7 +911,7 @@ Phase 10 (Tests) → Phase 11 (Packaging & Doc)
 - Buffer 125ms: compromis réactivité/stabilité (8 updates/sec)
 - Pondération A: simule oreille humaine (vs C = linéaire)
 - Leq_1min: plus réactif que Leq_8h pour écoute musicale
-- Volume système inaccessible via WASAPI → calibration nécessaire
+- Volume système intégré via AudioEndpointVolume (NAudio)
 
 **Structure projet**: Models/ ViewModels/ Views/ Services/ Resources/ Converters/ Controls/ + Tests/
 

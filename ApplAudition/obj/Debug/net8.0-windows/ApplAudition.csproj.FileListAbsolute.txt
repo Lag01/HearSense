@@ -54,3 +54,7 @@ C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windo
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ApplAudition.genruntimeconfig.cache
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ref\ApplAudition.dll
 C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\ApplAudition.sourcelink.json
+C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\Views\SettingsWindow.baml
+C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\Views\SettingsWindow.g.cs
+C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\Views\TrayPopup.g.cs
+C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\obj\Debug\net8.0-windows\Views\TrayPopup.baml

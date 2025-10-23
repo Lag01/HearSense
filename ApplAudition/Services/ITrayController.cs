@@ -43,4 +43,20 @@ public interface ITrayController : IDisposable
     /// Indique si l'icône tray est actuellement visible.
     /// </summary>
     bool IsVisible { get; }
+
+    /// <summary>
+    /// Définit le callback appelé lorsque l'utilisateur clique sur "Paramètres" dans le menu tray.
+    /// </summary>
+    /// <param name="callback">Action à exécuter pour ouvrir la fenêtre de paramètres</param>
+    void SetSettingsCallback(Action callback);
+
+    /// <summary>
+    /// Affiche le popup tray avec la jauge dB miniature.
+    /// </summary>
+    void ShowPopup();
+
+    /// <summary>
+    /// Masque le popup tray s'il est affiché.
+    /// </summary>
+    void HidePopup();
 }

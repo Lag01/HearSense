@@ -28,6 +28,8 @@ public partial class MainViewModel : BaseViewModel
     private readonly IEstimationModeManager _estimationModeManager;
     private readonly ISettingsService _settingsService;
     private readonly IExportService _exportService;
+    private readonly INotificationManager _notificationManager;
+    private readonly ITrayController _trayController;
     private readonly ILogger _logger;
 
     /// <summary>
@@ -109,6 +111,8 @@ public partial class MainViewModel : BaseViewModel
         IEstimationModeManager estimationModeManager,
         ISettingsService settingsService,
         IExportService exportService,
+        INotificationManager notificationManager,
+        ITrayController trayController,
         CalibrationViewModel calibrationViewModel,
         ILogger logger)
     {
@@ -121,6 +125,8 @@ public partial class MainViewModel : BaseViewModel
         _estimationModeManager = estimationModeManager;
         _settingsService = settingsService;
         _exportService = exportService;
+        _notificationManager = notificationManager;
+        _trayController = trayController;
         CalibrationViewModel = calibrationViewModel;
         _logger = logger;
 
@@ -357,6 +363,9 @@ public partial class MainViewModel : BaseViewModel
             // ÉTAPE 6 : Catégoriser l'exposition basée sur le SPL lissé (pas sur dBFS)
             var category = _exposureCategorizer.CategorizeExposure(smoothedSpl);
 
+            // ÉTAPE 6.5 : Vérifier le seuil critique et notifier si nécessaire
+            _notificationManager.CheckThreshold(smoothedSpl);
+
             // Incrémenter le compteur de throttling
             _displayThrottleCounter++;
 
@@ -374,6 +383,9 @@ public partial class MainViewModel : BaseViewModel
 
                     // ÉTAPE 9 : Mettre à jour le SPL estimé dans CalibrationViewModel (Phase 8)
                     CalibrationViewModel.UpdateCurrentEstimatedSpl(smoothedSpl);
+
+                    // ÉTAPE 10 : Mettre à jour le tooltip du tray en temps réel
+                    _trayController.UpdateTooltip(smoothedSpl, category);
                 });
             }
 

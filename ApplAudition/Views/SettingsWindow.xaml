@@ -1,0 +1,198 @@
+<Window x:Class="ApplAudition.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Paramètres - Appli Audition"
+        Height="700"
+        Width="550"
+        MinHeight="600"
+        MinWidth="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- En-tête -->
+        <TextBlock Grid.Row="0"
+                   Text="Paramètres"
+                   FontSize="24"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,20"/>
+
+        <!-- ScrollViewer pour le contenu -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!-- Section 1 : Limite critique -->
+                <Expander Header="Limite critique" IsExpanded="True" Margin="0,0,0,15">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
+                        <StackPanel>
+                            <!-- Seuil critique avec Slider + TextBox -->
+                            <TextBlock Text="Seuil critique (dB(A))" FontWeight="SemiBold" Margin="0,0,0,10"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Slider Grid.Column="0"
+                                        Minimum="40"
+                                        Maximum="120"
+                                        TickFrequency="5"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding CriticalThresholdDbA, Mode=TwoWay}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,15,0"/>
+
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding CriticalThresholdDbA, Mode=TwoWay, StringFormat=F0}"
+                                         Width="60"
+                                         FontSize="14"
+                                         FontWeight="Bold"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         Height="30"/>
+                            </Grid>
+
+                            <!-- Recommandations OMS/française -->
+                            <Border Background="#E3F2FD" CornerRadius="6" Padding="12" Margin="0,15,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="📋 Recommandations OMS/française"
+                                               FontWeight="SemiBold"
+                                               Foreground="#1976D2"
+                                               Margin="0,0,0,8"/>
+
+                                    <TextBlock Text="Exposition maximale recommandée :"
+                                               FontSize="12"
+                                               Foreground="#424242"
+                                               Margin="0,0,0,5"/>
+
+                                    <TextBlock FontSize="12" Foreground="#424242" Margin="5,0,0,0">
+                                        <Run Text="• 85 dB(A) → 8 heures maximum"/><LineBreak/>
+                                        <Run Text="• 88 dB(A) → 4 heures maximum"/><LineBreak/>
+                                        <Run Text="• 91 dB(A) → 2 heures maximum"/><LineBreak/>
+                                        <Run Text="• 94 dB(A) → 1 heure maximum"/><LineBreak/>
+                                        <Run Text="• 97 dB(A) → 30 minutes maximum"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+                <!-- Section 2 : Notifications -->
+                <Expander Header="Notifications" IsExpanded="True" Margin="0,0,0,15">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
+                        <StackPanel>
+                            <!-- Activer notifications -->
+                            <CheckBox Content="Activer les notifications de dépassement"
+                                      IsChecked="{Binding EnableNotifications, Mode=TwoWay}"
+                                      FontWeight="SemiBold"
+                                      Margin="0,0,0,15"/>
+
+                            <!-- Cooldown -->
+                            <TextBlock Text="Intervalle minimal entre notifications (minutes)"
+                                       Margin="0,0,0,10"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Slider Grid.Column="0"
+                                        Minimum="1"
+                                        Maximum="30"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,15,0"
+                                        IsEnabled="{Binding EnableNotifications}"/>
+
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
+                                         Width="60"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         Height="30"
+                                         IsEnabled="{Binding EnableNotifications}"/>
+                            </Grid>
+
+                            <!-- Notification unique -->
+                            <CheckBox Content="Une seule notification par session"
+                                      IsChecked="{Binding NotificationShowOncePerSession, Mode=TwoWay}"
+                                      Margin="0,15,0,15"
+                                      IsEnabled="{Binding EnableNotifications}"/>
+
+                            <!-- Bouton test -->
+                            <Button Content="🔔 Tester la notification"
+                                    Command="{Binding TestNotificationCommand}"
+                                    HorizontalAlignment="Left"
+                                    Padding="12,6"
+                                    IsEnabled="{Binding EnableNotifications}"/>
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+                <!-- Section 3 : Comportement -->
+                <Expander Header="Comportement" IsExpanded="True" Margin="0,0,0,15">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
+                        <StackPanel>
+                            <CheckBox Content="Démarrer avec Windows"
+                                      IsChecked="{Binding StartWithWindows, Mode=TwoWay}"
+                                      Margin="0,0,0,12"/>
+
+                            <CheckBox Content="Démarrer minimisé dans le system tray"
+                                      IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                                      Margin="0,0,0,12"
+                                      IsEnabled="{Binding StartWithWindows}"/>
+
+                            <CheckBox Content="Minimiser vers le tray à la fermeture"
+                                      IsChecked="{Binding MinimizeToTrayOnClose, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Message de statut -->
+        <TextBlock Grid.Row="2"
+                   Text="{Binding StatusMessage}"
+                   FontStyle="Italic"
+                   FontSize="12"
+                   Foreground="Gray"
+                   Margin="0,10,0,10"
+                   TextWrapping="Wrap"
+                   MinHeight="20"/>
+
+        <!-- Boutons Enregistrer / Annuler -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Annuler"
+                    Command="{Binding CancelCommand}"
+                    Padding="20,8"
+                    Margin="0,0,10,0"
+                    Background="Transparent"
+                    BorderBrush="LightGray"
+                    BorderThickness="1"/>
+
+            <Button Content="Enregistrer"
+                    Command="{Binding SaveSettingsCommand}"
+                    Padding="20,8"
+                    Background="#2196F3"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"/>
+        </StackPanel>
+    </Grid>
+</Window>

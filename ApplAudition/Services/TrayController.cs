@@ -1,7 +1,9 @@
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using ApplAudition.Models;
+using ApplAudition.Views;
 using Serilog;
 using Application = System.Windows.Application;
 
@@ -17,6 +19,10 @@ public class TrayController : ITrayController
     private NotifyIcon? _notifyIcon;
     private Window? _mainWindow;
     private bool _isDisposed;
+    private Action? _settingsCallback;
+    private TrayPopup? _trayPopup;
+    private float _latestDbA;
+    private ExposureCategory _latestCategory;
 
     public bool IsVisible => _notifyIcon?.Visible ?? false;
 
@@ -59,6 +65,10 @@ public class TrayController : ITrayController
         showMenuItem.Font = new Font(showMenuItem.Font, System.Drawing.FontStyle.Bold);
         contextMenu.Items.Add(showMenuItem);
 
+        var settingsMenuItem = new ToolStripMenuItem("Paramètres");
+        settingsMenuItem.Click += (s, e) => OpenSettings();
+        contextMenu.Items.Add(settingsMenuItem);
+
         contextMenu.Items.Add(new ToolStripSeparator());
 
         var quitMenuItem = new ToolStripMenuItem("Quitter");
@@ -66,6 +76,16 @@ public class TrayController : ITrayController
         contextMenu.Items.Add(quitMenuItem);
 
         _notifyIcon.ContextMenuStrip = contextMenu;
+
+        // Clic gauche pour afficher popup
+        _notifyIcon.Click += (s, e) =>
+        {
+            var mouseEvent = e as MouseEventArgs;
+            if (mouseEvent?.Button == MouseButtons.Left)
+            {
+                ShowPopup();
+            }
+        };
 
         // Double-clic pour restaurer fenêtre
         _notifyIcon.DoubleClick += (s, e) => ShowMainWindow();
@@ -80,6 +100,10 @@ public class TrayController : ITrayController
     {
         if (_notifyIcon == null || _isDisposed)
             return;
+
+        // Sauvegarder les valeurs pour le popup
+        _latestDbA = currentDbA;
+        _latestCategory = category;
 
         // Formater tooltip (max 63 caractères sur Windows)
         string categoryText = category switch
@@ -97,6 +121,15 @@ public class TrayController : ITrayController
             tooltip = tooltip.Substring(0, 60) + "...";
 
         _notifyIcon.Text = tooltip;
+
+        // Mettre à jour le popup s'il est affiché
+        if (_trayPopup != null && _trayPopup.IsVisible)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _trayPopup.ViewModel.UpdateValues(currentDbA, category);
+            });
+        }
     }
 
     /// <summary>
@@ -151,11 +184,144 @@ public class TrayController : ITrayController
     }
 
     /// <summary>
+    /// Définit le callback appelé lorsque l'utilisateur clique sur "Paramètres".
+    /// </summary>
+    public void SetSettingsCallback(Action callback)
+    {
+        _settingsCallback = callback;
+        _logger.Debug("Callback des paramètres défini");
+    }
+
+    /// <summary>
+    /// Ouvre la fenêtre de paramètres via le callback.
+    /// </summary>
+    private void OpenSettings()
+    {
+        if (_settingsCallback != null)
+        {
+            _logger.Debug("Ouverture des paramètres depuis le menu tray");
+            Application.Current.Dispatcher.Invoke(_settingsCallback);
+        }
+        else
+        {
+            _logger.Warning("Callback des paramètres non défini");
+        }
+    }
+
+    /// <summary>
+    /// Affiche le popup tray avec la jauge dB miniature (style EarTrumpet).
+    /// </summary>
+    public void ShowPopup()
+    {
+        try
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Fermer popup existant s'il y en a un
+                HidePopup();
+
+                // Créer nouveau popup via DI
+                var app = Application.Current as App;
+                if (app == null) return;
+
+                var serviceProvider = app.GetType().GetField("_serviceProvider",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.GetValue(app) as IServiceProvider;
+
+                if (serviceProvider == null)
+                {
+                    _logger.Warning("ServiceProvider introuvable pour créer TrayPopup");
+                    return;
+                }
+
+                _trayPopup = serviceProvider.GetService(typeof(TrayPopup)) as TrayPopup;
+                if (_trayPopup == null)
+                {
+                    _logger.Warning("Impossible de créer TrayPopup via DI");
+                    return;
+                }
+
+                // Mettre à jour les valeurs
+                _trayPopup.ViewModel.UpdateValues(_latestDbA, _latestCategory);
+
+                // Calculer la position près de l'icône tray
+                var position = GetTrayIconPosition();
+                _trayPopup.Left = position.X;
+                _trayPopup.Top = position.Y;
+
+                _trayPopup.Show();
+                _trayPopup.Activate();
+
+                _logger.Debug("Popup tray affiché");
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors de l'affichage du popup tray");
+        }
+    }
+
+    /// <summary>
+    /// Masque le popup tray s'il est affiché.
+    /// </summary>
+    public void HidePopup()
+    {
+        try
+        {
+            if (_trayPopup != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _trayPopup.Close();
+                    _trayPopup = null;
+                });
+
+                _logger.Debug("Popup tray masqué");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors de la fermeture du popup tray");
+        }
+    }
+
+    /// <summary>
+    /// Calcule la position du popup près de l'icône tray.
+    /// </summary>
+    private System.Windows.Point GetTrayIconPosition()
+    {
+        // Obtenir la position de la souris (approximation de l'icône tray)
+        var cursorPosition = System.Windows.Forms.Cursor.Position;
+
+        // Obtenir la taille de l'écran de travail
+        var workingArea = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+
+        // Dimensions du popup
+        const double popupWidth = 280;
+        const double popupHeight = 230;
+
+        // Calculer position (en bas à droite par défaut, ajustée selon position icône)
+        double x = cursorPosition.X - (popupWidth / 2);
+        double y = workingArea.Bottom - popupHeight - 10;
+
+        // Ajuster si dépasse l'écran
+        if (x < workingArea.Left)
+            x = workingArea.Left + 10;
+        if (x + popupWidth > workingArea.Right)
+            x = workingArea.Right - popupWidth - 10;
+
+        return new System.Windows.Point(x, y);
+    }
+
+    /// <summary>
     /// Quitte l'application complètement.
     /// </summary>
     private void QuitApplication()
     {
         _logger.Information("Fermeture de l'application depuis le menu tray");
+
+        // Fermer le popup s'il est ouvert
+        HidePopup();
 
         // Disposer le NotifyIcon avant de quitter (sinon icône fantôme)
         Dispose();

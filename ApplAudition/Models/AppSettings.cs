@@ -31,4 +31,26 @@ public class AppSettings
     /// Indique si la fermeture de la fenêtre minimise vers le tray au lieu de quitter.
     /// </summary>
     public bool MinimizeToTrayOnClose { get; set; } = true;
+
+    /// <summary>
+    /// Seuil critique de niveau sonore en dB(A) qui déclenche une notification.
+    /// Recommandation OMS/française : 85 dB(A) maximum 8h/jour.
+    /// </summary>
+    public float CriticalThresholdDbA { get; set; } = 85.0f;
+
+    /// <summary>
+    /// Indique si les notifications de dépassement de seuil sont activées.
+    /// </summary>
+    public bool EnableNotifications { get; set; } = true;
+
+    /// <summary>
+    /// Durée minimale en minutes entre deux notifications (cooldown).
+    /// Évite le spam si l'utilisateur reste au-dessus du seuil.
+    /// </summary>
+    public int NotificationCooldownMinutes { get; set; } = 5;
+
+    /// <summary>
+    /// Si true, ne notifie qu'une seule fois par session (jusqu'au redémarrage de l'application).
+    /// </summary>
+    public bool NotificationShowOncePerSession { get; set; } = false;
 }

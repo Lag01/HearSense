@@ -25,8 +25,7 @@ public partial class MainWindow : Window
         // Hook événement fermeture pour minimiser vers tray
         Closing += OnWindowClosing;
 
-        // Initialiser le tray au démarrage (mode normal)
-        _trayController.Initialize(this);
+        // Le tray est maintenant initialisé dans App.xaml.cs au démarrage
     }
 
     /// <summary>
