@@ -299,16 +299,38 @@ public class TrayController : ITrayController
         // Dimensions du popup
         const double popupWidth = 280;
         const double popupHeight = 230;
+        const double margin = 10; // Marge depuis les bords de l'écran
 
-        // Calculer position (en bas à droite par défaut, ajustée selon position icône)
+        // Calculer position initiale (centrée horizontalement sur le curseur, au-dessus de la barre des tâches)
         double x = cursorPosition.X - (popupWidth / 2);
-        double y = workingArea.Bottom - popupHeight - 10;
+        double y = workingArea.Bottom - popupHeight - margin;
 
-        // Ajuster si dépasse l'écran
-        if (x < workingArea.Left)
-            x = workingArea.Left + 10;
-        if (x + popupWidth > workingArea.Right)
-            x = workingArea.Right - popupWidth - 10;
+        // Ajuster X si dépasse le bord gauche
+        if (x < workingArea.Left + margin)
+        {
+            x = workingArea.Left + margin;
+        }
+
+        // Ajuster X si dépasse le bord droit
+        if (x + popupWidth > workingArea.Right - margin)
+        {
+            x = workingArea.Right - popupWidth - margin;
+        }
+
+        // Ajuster Y si dépasse le haut de l'écran (cas rare)
+        if (y < workingArea.Top + margin)
+        {
+            y = workingArea.Top + margin;
+        }
+
+        // Ajuster Y si dépasse le bas de l'écran
+        if (y + popupHeight > workingArea.Bottom - margin)
+        {
+            y = workingArea.Bottom - popupHeight - margin;
+        }
+
+        _logger.Debug("Position du popup TrayPopup calculée : X={X}, Y={Y} (Cursor: {CursorX}, {CursorY})",
+            x, y, cursorPosition.X, cursorPosition.Y);
 
         return new System.Windows.Point(x, y);
     }

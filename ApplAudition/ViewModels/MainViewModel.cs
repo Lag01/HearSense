@@ -29,6 +29,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly IExportService _exportService;
     private readonly INotificationManager _notificationManager;
     private readonly ITrayController _trayController;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger _logger;
 
 
@@ -71,13 +72,19 @@ public partial class MainViewModel : BaseViewModel
     /// <summary>
     /// Série LiveCharts2 pour le graphe dB(A) (Phase 6 - Tâche 15).
     /// </summary>
-    public ISeries[] Series { get; set; }
+    public ISeries[] Series { get; set; } = null!;
 
     /// <summary>
     /// Axes X et Y pour le graphe (Phase 6 - Tâche 15).
     /// </summary>
-    public Axis[] XAxes { get; set; }
-    public Axis[] YAxes { get; set; }
+    public Axis[] XAxes { get; set; } = null!;
+    public Axis[] YAxes { get; set; } = null!;
+
+    [ObservableProperty]
+    private bool _isSpeakerDetected = false;
+
+    [ObservableProperty]
+    private string _speakerWarningMessage = "";
 
     #endregion
 
@@ -102,6 +109,7 @@ public partial class MainViewModel : BaseViewModel
         IExportService exportService,
         INotificationManager notificationManager,
         ITrayController trayController,
+        IServiceProvider serviceProvider,
         ILogger logger)
     {
         _audioCaptureService = audioCaptureService;
@@ -114,6 +122,7 @@ public partial class MainViewModel : BaseViewModel
         _exportService = exportService;
         _notificationManager = notificationManager;
         _trayController = trayController;
+        _serviceProvider = serviceProvider;
         _logger = logger;
 
         // Souscrire aux événements du service de capture
@@ -270,6 +279,33 @@ public partial class MainViewModel : BaseViewModel
     /// Indique si l'export CSV est possible (au moins un point de données).
     /// </summary>
     private bool CanExportCsv() => ExportHistoryData.Count > 0;
+
+    /// <summary>
+    /// Commande pour ouvrir la fenêtre de paramètres.
+    /// </summary>
+    [RelayCommand]
+    private void OpenSettings()
+    {
+        try
+        {
+            var settingsWindow = _serviceProvider.GetService(typeof(Views.SettingsWindow)) as Views.SettingsWindow;
+            if (settingsWindow != null)
+            {
+                settingsWindow.ShowDialog();
+                _logger.Information("Fenêtre de paramètres ouverte depuis MainWindow");
+            }
+            else
+            {
+                _logger.Warning("Impossible de créer SettingsWindow via DI");
+                StatusMessage = "Erreur : Impossible d'ouvrir les paramètres";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors de l'ouverture de la fenêtre de paramètres");
+            StatusMessage = $"Erreur : {ex.Message}";
+        }
+    }
 
     #endregion
 
