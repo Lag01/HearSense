@@ -23,7 +23,9 @@
       "Bash(timeout:*)",
       "Bash(taskkill:*)",
       "Bash(git checkout -b feature/tray-startup)",
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(Select-String -Pattern \"error|warning\")",
+      "Bash(Select-Object -First 30)"
     ],
     "deny": [],
     "ask": []

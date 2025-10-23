@@ -55,23 +55,21 @@ FONCTIONNALITÉS
 - 100% offline (aucune connexion réseau)
 
 
-MODES D'ESTIMATION
-==================
+SEUILS PERSONNALISABLES
+=======================
 
-MODE A : Zero-Input Conservateur (par défaut)
-----------------------------------------------
-- Affichage : dB(A) relatif (pas de SPL absolu)
-- Activation : Toujours disponible, périphérique non reconnu
-- Biais de sécurité : -5 dB (sur-estimation)
-- Cas d'usage : Indication relative sans calibration
+Vous pouvez définir vos propres niveaux d'alerte selon votre tolérance :
 
-MODE B : Auto-profil Heuristique
----------------------------------
-- Affichage : SPL estimé en dB(A) absolu
-- Activation : Périphérique reconnu (patterns JSON)
-- Précision : ±5-8 dB typique
-- Cas d'usage : Casques populaires détectés automatiquement
-- Avertissement : "Estimation heuristique, marge ±6 dB"
+1. Ouvrez les Paramètres de l'application
+2. Ajustez les curseurs :
+   - Seuil Orange (avertissement) : Par défaut 70 dB(A)
+   - Seuil Rouge (danger) : Par défaut 85 dB(A)
+3. Les couleurs s'adaptent automatiquement selon vos préférences
+
+Recommandations OMS (Organisation Mondiale de la Santé) :
+- Vert (< 85 dB(A)) : Sûr jusqu'à 8h/jour
+- Orange (70-85 dB(A)) : Limiter la durée d'exposition
+- Rouge (> 85 dB(A)) : Réduire immédiatement le volume
 
 
 LIMITES IMPORTANTES
@@ -112,24 +110,6 @@ Durée d'exposition maximale selon le niveau :
 - > 95 dB(A)  : < 15 minutes (éviter)
 
 
-CALIBRATION OPTIONNELLE
-=======================
-
-Pour améliorer la précision (±2-3 dB) :
-
-1. Matériel requis :
-   - Sonomètre de référence (IEC 61672 classe 2 minimum)
-   - Coupleur acoustique ou mesure in-situ
-
-2. Procédure :
-   - Jouer un signal de test (bruit rose, musique)
-   - Mesurer le SPL réel avec le sonomètre
-   - Dans l'application : "Calibration" → entrer valeur mesurée
-   - L'application ajuste la constante C automatiquement
-
-3. Limitations :
-   - ⚠ Valide uniquement pour ce périphérique + volume système
-   - ⚠ Changer le volume ou le casque invalide la calibration
 
 
 FICHIERS DE L'APPLICATION
@@ -169,9 +149,9 @@ Q : L'application affiche 0.0 dB(A), pourquoi ?
 R : Assurez-vous qu'un audio est en cours de lecture (musique, vidéo).
     Vérifiez que le périphérique audio est actif dans Windows.
 
-Q : Pourquoi le Mode B n'est pas activé ?
-R : Votre casque n'est pas dans la base de profils embarquée.
-    L'application reste en Mode A (zero-input conservateur).
+Q : Comment personnaliser les seuils d'alerte ?
+R : Ouvrez les Paramètres et ajustez les curseurs pour les seuils
+    Orange et Rouge selon votre tolérance personnelle.
 
 Q : L'application consomme trop de CPU ?
 R : Vérifiez qu'aucune autre application audio intensive ne tourne.

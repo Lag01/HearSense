@@ -1,21 +1,22 @@
 namespace ApplAudition.Models;
 
 /// <summary>
-/// Modèle pour les paramètres de l'application (Phase 7 - Tâche 18).
+/// Modèle pour les paramètres de l'application.
 /// Persisté dans %LOCALAPPDATA%\ApplAudition\settings.json.
 /// </summary>
 public class AppSettings
 {
     /// <summary>
-    /// Indique si le Mode A est forcé (ignore les profils détectés).
+    /// Seuil d'avertissement (orange) en dB(A).
+    /// Défaut : 70 dB(A) (conservateur, en dessous des recommandations OMS).
     /// </summary>
-    public bool ForceModeA { get; set; }
+    public float ThresholdWarning { get; set; } = 70.0f;
 
     /// <summary>
-    /// Constante de calibration personnalisée (optionnelle, Phase 8).
-    /// Si null, utilise la constante du profil heuristique.
+    /// Seuil de danger (rouge) en dB(A).
+    /// Défaut : 85 dB(A) (recommandation OMS : max 8h/jour).
     /// </summary>
-    public float? CalibrationConstantC { get; set; }
+    public float ThresholdDanger { get; set; } = 85.0f;
 
     /// <summary>
     /// Indique si l'application doit démarrer automatiquement avec Windows.
@@ -34,7 +35,7 @@ public class AppSettings
 
     /// <summary>
     /// Seuil critique de niveau sonore en dB(A) qui déclenche une notification.
-    /// Recommandation OMS/française : 85 dB(A) maximum 8h/jour.
+    /// Par défaut, utilise ThresholdDanger.
     /// </summary>
     public float CriticalThresholdDbA { get; set; } = 85.0f;
 

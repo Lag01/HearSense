@@ -1,11 +1,10 @@
-using ApplAudition.Models;
 using Serilog;
 
 namespace ApplAudition.Services;
 
 /// <summary>
-/// Gestionnaire simplifié d'estimation SPL (Mode A uniquement).
-/// Formule simple : SPL_est = dBFS + volume_système_dB + 120 dB
+/// Gestionnaire simplifié d'estimation SPL.
+/// Formule simple : SPL_est = dBFS + volume_système_dB + offset_dynamique
 /// </summary>
 public class EstimationModeManager : IEstimationModeManager
 {
@@ -23,14 +22,6 @@ public class EstimationModeManager : IEstimationModeManager
     private const float MEDIUM_OFFSET = 110.0f;          // Offset pour sons moyens
     private const float HIGH_OFFSET = 120.0f;            // Offset pour sons forts
 
-    public EstimationMode CurrentMode => EstimationMode.ModeA; // Toujours Mode A
-    public Profile? CurrentProfile => null; // Pas de profils
-    public bool IsForcedModeA => false; // Pas de mode forcé
-    public bool IsCalibrated => false; // Pas de calibration
-    public float? CalibrationConstantC => null; // Pas de calibration
-
-    public event EventHandler? ModeChanged;
-
     public EstimationModeManager(
         ISystemVolumeService systemVolumeService,
         ILogger logger)
@@ -40,11 +31,11 @@ public class EstimationModeManager : IEstimationModeManager
     }
 
     /// <summary>
-    /// Initialise le gestionnaire (simplifié - rien à faire).
+    /// Initialise le gestionnaire.
     /// </summary>
     public void Initialize()
     {
-        _logger.Information("EstimationModeManager initialisé - Mode A avec offset dynamique (80-120 dB)");
+        _logger.Information("EstimationModeManager initialisé - offset dynamique 80-120 dB");
     }
 
     /// <summary>
@@ -81,62 +72,51 @@ public class EstimationModeManager : IEstimationModeManager
     }
 
     /// <summary>
-    /// Calcule un offset dynamique basé sur le niveau dBFS du signal.
-    /// Utilise une interpolation linéaire progressive pour des transitions lisses.
+    /// Calcule l'offset dynamique selon le niveau dBFS.
+    /// Interpole linéairement entre 4 zones : silence, faible, moyen, fort.
     /// </summary>
-    /// <param name="dbfs">Niveau en dBFS</param>
-    /// <returns>Offset à ajouter (80 à 120 dB)</returns>
     private float CalculateDynamicOffset(float dbfs)
     {
-        // Zone 1 : Sons faibles (-80 à -40 dBFS)
-        // Interpolation linéaire de 80 dB à 100 dB
+        // Zone 1 : Silence (< -80 dBFS) → offset 80 dB
+        if (dbfs < SILENCE_THRESHOLD)
+        {
+            return SILENCE_OFFSET;
+        }
+
+        // Zone 2 : Sons faibles (-80 à -40 dBFS) → interpolation linéaire 80 → 100 dB
         if (dbfs < LOW_SOUND_THRESHOLD)
         {
             float ratio = (dbfs - SILENCE_THRESHOLD) / (LOW_SOUND_THRESHOLD - SILENCE_THRESHOLD);
-            ratio = Math.Clamp(ratio, 0.0f, 1.0f); // Sécurité
-            return SILENCE_OFFSET + ratio * (LOW_OFFSET - SILENCE_OFFSET);
+            return Lerp(SILENCE_OFFSET, LOW_OFFSET, ratio);
         }
 
-        // Zone 2 : Sons moyens (-40 à -10 dBFS)
-        // Interpolation linéaire de 100 dB à 110 dB
+        // Zone 3 : Sons moyens (-40 à -10 dBFS) → interpolation linéaire 100 → 110 dB
         if (dbfs < MEDIUM_SOUND_THRESHOLD)
         {
             float ratio = (dbfs - LOW_SOUND_THRESHOLD) / (MEDIUM_SOUND_THRESHOLD - LOW_SOUND_THRESHOLD);
-            ratio = Math.Clamp(ratio, 0.0f, 1.0f);
-            return LOW_OFFSET + ratio * (MEDIUM_OFFSET - LOW_OFFSET);
+            return Lerp(LOW_OFFSET, MEDIUM_OFFSET, ratio);
         }
 
-        // Zone 3 : Sons forts (-10 à 0 dBFS)
-        // Interpolation linéaire de 110 dB à 120 dB
+        // Zone 4 : Sons forts (> -10 dBFS) → interpolation linéaire 110 → 120 dB
+        // Clamp à 0 dBFS max (amplitude maximale avant saturation)
+        if (dbfs > 0.0f)
+        {
+            dbfs = 0.0f;
+        }
+
         float ratioHigh = (dbfs - MEDIUM_SOUND_THRESHOLD) / (0.0f - MEDIUM_SOUND_THRESHOLD);
-        ratioHigh = Math.Clamp(ratioHigh, 0.0f, 1.0f);
-        return MEDIUM_OFFSET + ratioHigh * (HIGH_OFFSET - MEDIUM_OFFSET);
+        return Lerp(MEDIUM_OFFSET, HIGH_OFFSET, ratioHigh);
     }
 
     /// <summary>
-    /// Force le Mode A (non utilisé - toujours Mode A de toute façon).
+    /// Interpolation linéaire entre a et b selon le ratio [0, 1].
     /// </summary>
-    public void SetForceModeA(bool force)
+    private float Lerp(float a, float b, float t)
     {
-        // Rien à faire - toujours Mode A
-        _logger.Debug("SetForceModeA appelé mais ignoré (Mode A permanent)");
-    }
+        // Clamp t à [0, 1]
+        if (t < 0.0f) t = 0.0f;
+        if (t > 1.0f) t = 1.0f;
 
-    /// <summary>
-    /// Définit une constante de calibration (non supporté dans la version simplifiée).
-    /// </summary>
-    public async Task SetCalibrationConstantAsync(float? constantC)
-    {
-        _logger.Warning("SetCalibrationConstantAsync appelé mais non supporté dans la version simplifiée");
-        await Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Réinitialise la calibration (non supporté dans la version simplifiée).
-    /// </summary>
-    public async Task ResetCalibrationAsync()
-    {
-        _logger.Warning("ResetCalibrationAsync appelé mais non supporté dans la version simplifiée");
-        await Task.CompletedTask;
+        return a + (b - a) * t;
     }
 }

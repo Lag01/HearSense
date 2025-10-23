@@ -112,16 +112,31 @@ L'application utilise un système de feux de signalisation :
 
 ---
 
-## Réglage des seuils de notification
+## Personnaliser les seuils d'alerte
 
-Vous pouvez personnaliser à partir de quel niveau vous voulez recevoir une alerte.
+L'application vous permet de définir vos propres niveaux d'alerte selon votre tolérance personnelle.
 
-**Exemple** : Si vous êtes plus prudent, réglez le seuil orange à 65 dB(A) au lieu de 70 dB(A).
+### Pourquoi personnaliser ?
 
-**Comment régler** : (Section à adapter selon votre UI)
-1. Cliquez sur le bouton **Paramètres** / **⚙️**
-2. Ajustez les curseurs pour les seuils Vert/Orange/Rouge
-3. Enregistrez
+- Vous êtes plus sensible au bruit → baissez les seuils
+- Vous voulez suivre les recommandations OMS strictes → 85 dB(A) max
+- Vous préférez des alertes plus conservatrices → réglez orange à 65 dB(A)
+
+### Comment régler
+
+1. Ouvrez les **Paramètres** de l'application
+2. Utilisez les curseurs pour ajuster :
+   - **Seuil Orange (Avertissement)** : Défaut 70 dB(A), plage 60-90 dB(A)
+   - **Seuil Rouge (Danger)** : Défaut 85 dB(A), plage 75-100 dB(A)
+3. Les changements sont appliqués **immédiatement** et automatiquement sauvegardés
+
+### Exemple de personnalisation
+
+| Profil utilisateur | Seuil Orange | Seuil Rouge | Objectif |
+|-------------------|--------------|-------------|----------|
+| **Très prudent** | 60 dB(A) | 70 dB(A) | Protection maximale |
+| **Conservateur** (défaut) | 70 dB(A) | 85 dB(A) | Marge de sécurité |
+| **OMS strict** | 80 dB(A) | 85 dB(A) | Recommandation OMS uniquement |
 
 ---
 
@@ -180,9 +195,11 @@ Consultez un médecin ORL si vous ressentez :
 **Explications** :
 - L'application mesure le **signal numérique envoyé** au casque, pas la pression acoustique réelle dans votre oreille
 - Marge d'erreur normale : **±5-8 dB**
-- Variables non contrôlées : volume Windows, fit du casque, isolation
+- Variables non contrôlées : fit du casque, isolation, type d'écouteurs
 
-**Solution** : Fiez-vous aux **couleurs** (vert/orange/rouge) plutôt qu'aux valeurs exactes en dB.
+**Solution** :
+1. Fiez-vous aux **couleurs** (vert/orange/rouge) plutôt qu'aux valeurs exactes en dB
+2. **Personnalisez les seuils** selon votre ressenti personnel dans les Paramètres
 
 ### ❌ L'application consomme trop de ressources
 

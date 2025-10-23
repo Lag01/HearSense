@@ -26,14 +26,5 @@ public interface ISettingsService
     /// Obtient les paramètres actuels.
     /// </summary>
     AppSettings Settings { get; }
-
-    /// <summary>
-    /// Définit si le Mode A est forcé.
-    /// </summary>
-    Task SetForceModeAAsync(bool force);
-
-    /// <summary>
-    /// Définit la constante de calibration personnalisée.
-    /// </summary>
-    Task SetCalibrationConstantAsync(float? constantC);
 }
+

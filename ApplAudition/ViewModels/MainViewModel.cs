@@ -20,7 +20,6 @@ namespace ApplAudition.ViewModels;
 public partial class MainViewModel : BaseViewModel
 {
     private readonly IAudioCaptureService _audioCaptureService;
-    private readonly IAudioDeviceService _audioDeviceService;
     private readonly IDspEngine _dspEngine;
     private readonly AWeightingFilter _aWeightingFilter;
     private readonly ILeqCalculator _leqCalculator;
@@ -32,10 +31,6 @@ public partial class MainViewModel : BaseViewModel
     private readonly ITrayController _trayController;
     private readonly ILogger _logger;
 
-    /// <summary>
-    /// ViewModel pour la calibration (Phase 8 - Tâche 19).
-    /// </summary>
-    public CalibrationViewModel CalibrationViewModel { get; }
 
     #region Propriétés observables
 
@@ -60,11 +55,6 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty]
     private bool _isCapturing;
 
-    [ObservableProperty]
-    private bool _isSpeakerDetected;
-
-    [ObservableProperty]
-    private string _speakerWarningMessage = "Cette application est conçue uniquement pour les casques et écouteurs.\nLes enceintes et haut-parleurs ne sont pas supportés.";
 
     /// <summary>
     /// Collection observable pour l'historique du graphe (Phase 6 - Tâche 15).
@@ -103,7 +93,6 @@ public partial class MainViewModel : BaseViewModel
 
     public MainViewModel(
         IAudioCaptureService audioCaptureService,
-        IAudioDeviceService audioDeviceService,
         IDspEngine dspEngine,
         AWeightingFilter aWeightingFilter,
         ILeqCalculator leqCalculator,
@@ -113,11 +102,9 @@ public partial class MainViewModel : BaseViewModel
         IExportService exportService,
         INotificationManager notificationManager,
         ITrayController trayController,
-        CalibrationViewModel calibrationViewModel,
         ILogger logger)
     {
         _audioCaptureService = audioCaptureService;
-        _audioDeviceService = audioDeviceService;
         _dspEngine = dspEngine;
         _aWeightingFilter = aWeightingFilter;
         _leqCalculator = leqCalculator;
@@ -127,15 +114,11 @@ public partial class MainViewModel : BaseViewModel
         _exportService = exportService;
         _notificationManager = notificationManager;
         _trayController = trayController;
-        CalibrationViewModel = calibrationViewModel;
         _logger = logger;
 
         // Souscrire aux événements du service de capture
         _audioCaptureService.DataAvailable += OnAudioDataAvailable;
         _audioCaptureService.ErrorOccurred += OnErrorOccurred;
-
-        // Souscrire aux événements de changement de périphérique audio
-        _audioDeviceService.DeviceChanged += OnAudioDeviceChanged;
 
         // Timer UI pour refresh fluide (30 Hz = ~33ms) - Phase 6 Tâche 13
         _uiRefreshTimer = new DispatcherTimer
@@ -164,16 +147,6 @@ public partial class MainViewModel : BaseViewModel
         try
         {
             _logger.Information("Démarrage automatique de la capture audio");
-
-            // Vérifier si le périphérique est une enceinte
-            IsSpeakerDetected = _audioDeviceService.IsSpeaker;
-
-            if (IsSpeakerDetected)
-            {
-                _logger.Warning("Périphérique détecté comme enceinte : {DeviceName}", _audioDeviceService.DeviceName);
-                StatusMessage = "⚠ Enceinte détectée - Application non compatible";
-                return;
-            }
 
             await _audioCaptureService.StartAsync();
             IsCapturing = true;
@@ -331,12 +304,6 @@ public partial class MainViewModel : BaseViewModel
     {
         try
         {
-            // Vérifier si le périphérique est une enceinte - ne pas traiter les données
-            if (_audioDeviceService.IsSpeaker)
-            {
-                return;
-            }
-
             // Créer une copie du buffer pour ne pas modifier l'original
             float[] buffer = (float[])e.Buffer.Clone();
 
@@ -381,10 +348,7 @@ public partial class MainViewModel : BaseViewModel
                     Peak = peak;
                     ExposureCategory = category; // Safe/Moderate/Hazardous basé sur SPL lissé
 
-                    // ÉTAPE 9 : Mettre à jour le SPL estimé dans CalibrationViewModel (Phase 8)
-                    CalibrationViewModel.UpdateCurrentEstimatedSpl(smoothedSpl);
-
-                    // ÉTAPE 10 : Mettre à jour le tooltip du tray en temps réel
+                    // Mettre à jour le tooltip du tray en temps réel
                     _trayController.UpdateTooltip(smoothedSpl, category);
                 });
             }
@@ -417,36 +381,6 @@ public partial class MainViewModel : BaseViewModel
         IsCapturing = false;
     }
 
-    /// <summary>
-    /// Gestionnaire d'événement appelé lorsque le périphérique audio change.
-    /// </summary>
-    private void OnAudioDeviceChanged(object? sender, EventArgs e)
-    {
-        App.Current.Dispatcher.Invoke(() =>
-        {
-            // Mettre à jour le statut de détection d'enceinte
-            bool wasSpeaker = IsSpeakerDetected;
-            IsSpeakerDetected = _audioDeviceService.IsSpeaker;
-
-            _logger.Information("Changement de périphérique audio : {DeviceName} (Enceinte: {IsSpeaker})",
-                _audioDeviceService.DeviceName, IsSpeakerDetected);
-
-            // Si on passe d'un casque à une enceinte
-            if (!wasSpeaker && IsSpeakerDetected)
-            {
-                StatusMessage = "⚠ Enceinte détectée - Application non compatible";
-                IsCapturing = false;
-                _uiRefreshTimer.Stop();
-            }
-            // Si on passe d'une enceinte à un casque
-            else if (wasSpeaker && !IsSpeakerDetected)
-            {
-                StatusMessage = "Casque détecté - Redémarrage de l'analyse...";
-                // Redémarrer la capture audio
-                Task.Run(async () => await InitializeAndStartCaptureAsync());
-            }
-        });
-    }
 
     /// <summary>
     /// Handler du timer UI pour refresh fluide (Phase 6 - Tâche 13).
@@ -474,15 +408,13 @@ public partial class MainViewModel : BaseViewModel
         // Ajouter le point à l'historique interne
         HistoryData.Add(new DataPoint(elapsedSeconds, dbAValue));
 
-        // Phase 9 - Tâche 21 : Ajouter le point complet pour l'export CSV
+        // Ajouter le point complet pour l'export CSV
         var exportDataPoint = new ExportDataPoint(
             timestamp: DateTime.Now,
             dbFs: dbfsValue,
             dbA: dbAValue,
             leq1Min: leqValue,
-            peak: peakValue,
-            mode: EstimationMode.ModeA, // Mode A uniquement
-            profile: null); // Pas de profils
+            peak: peakValue);
 
         ExportHistoryData.Add(exportDataPoint);
 

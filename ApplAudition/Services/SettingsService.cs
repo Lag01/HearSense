@@ -58,8 +58,8 @@ public class SettingsService : ISettingsService
             {
                 _settings = loadedSettings;
                 _logger.Information(
-                    "Paramètres chargés - ForceModeA: {ForceModeA}",
-                    _settings.ForceModeA);
+                    "Paramètres chargés - ThresholdWarning: {Warning} dB, ThresholdDanger: {Danger} dB",
+                    _settings.ThresholdWarning, _settings.ThresholdDanger);
             }
             else
             {
@@ -98,31 +98,4 @@ public class SettingsService : ISettingsService
         }
     }
 
-    /// <summary>
-    /// Définit si le Mode A est forcé.
-    /// </summary>
-    public async Task SetForceModeAAsync(bool force)
-    {
-        if (_settings.ForceModeA == force)
-            return;
-
-        _settings.ForceModeA = force;
-        await SaveAsync();
-
-        _logger.Information("ForceModeA changé: {Force}", force);
-    }
-
-    /// <summary>
-    /// Définit la constante de calibration personnalisée (Phase 8).
-    /// </summary>
-    public async Task SetCalibrationConstantAsync(float? constantC)
-    {
-        if (_settings.CalibrationConstantC == constantC)
-            return;
-
-        _settings.CalibrationConstantC = constantC;
-        await SaveAsync();
-
-        _logger.Information("Constante de calibration changée: {ConstantC}", constantC);
-    }
 }

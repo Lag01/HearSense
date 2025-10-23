@@ -21,7 +21,7 @@ public class ExportService : IExportService
 
     /// <summary>
     /// Exporte les données historiques vers un fichier CSV.
-    /// Format : Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile
+    /// Format : Timestamp,dBFS,dB(A),Leq_1min,Peak
     /// </summary>
     /// <param name="data">Collection de points de données à exporter.</param>
     /// <param name="filePath">Chemin complet du fichier CSV de destination.</param>
@@ -44,7 +44,7 @@ public class ExportService : IExportService
             var csvContent = new StringBuilder();
 
             // En-tête CSV
-            csvContent.AppendLine("Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile");
+            csvContent.AppendLine("Timestamp,dBFS,dB(A),Leq_1min,Peak");
 
             // Lignes de données
             foreach (var point in dataList)
@@ -57,11 +57,9 @@ public class ExportService : IExportService
                 string dba = point.DbA.ToString("F1", CultureInfo.InvariantCulture);
                 string leq = point.Leq1Min.ToString("F1", CultureInfo.InvariantCulture);
                 string peak = point.Peak.ToString("F1", CultureInfo.InvariantCulture);
-                string mode = point.Mode.ToString();
-                string profile = point.Profile ?? "N/A";
 
                 // Construire ligne CSV
-                csvContent.AppendLine($"{timestamp},{dbfs},{dba},{leq},{peak},{mode},{profile}");
+                csvContent.AppendLine($"{timestamp},{dbfs},{dba},{leq},{peak}");
             }
 
             // Écrire dans le fichier avec encodage UTF-8 BOM (pour Excel)

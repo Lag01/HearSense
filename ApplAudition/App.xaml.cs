@@ -39,14 +39,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IDspEngine, DspEngine>();
         services.AddSingleton<ILeqCalculator, LeqCalculator>();
         services.AddSingleton<AWeightingFilter>(); // Pas d'interface pour le filtre (singleton direct)
-        services.AddSingleton<IExposureCategorizer, ExposureCategorizer>(); // Phase 3 : Catégorisation avec biais conservateur
+        services.AddSingleton<IExposureCategorizer, ExposureCategorizer>(); // Catégorisation avec seuils personnalisables
 
-        // Phase 4 : Système de profils heuristiques
-        services.AddSingleton<IAudioDeviceService, AudioDeviceService>();
-        services.AddSingleton<ProfileDatabase>();
-        services.AddSingleton<IProfileMatcher, ProfileMatcher>();
-
-        // Phase 5 : Mode B - Auto-profil Heuristique
+        // Gestionnaire d'estimation simplifié
         services.AddSingleton<IEstimationModeManager, EstimationModeManager>();
 
         // Phase 7 : Settings et persistance
@@ -67,7 +62,6 @@ public partial class App : System.Windows.Application
 
         // ViewModels (Transient - nouvelle instance à chaque résolution)
         services.AddTransient<MainViewModel>();
-        services.AddTransient<CalibrationViewModel>(); // Phase 8 : Calibration
         services.AddTransient<SettingsViewModel>(); // Fenêtre de paramètres
         services.AddTransient<TrayPopupViewModel>(); // Popup tray
 
@@ -138,32 +132,15 @@ public partial class App : System.Windows.Application
             // Appliquer le thème Light uniquement
             ApplyLightTheme();
 
-            // Charger les profils heuristiques
-            var profileDatabase = _serviceProvider.GetRequiredService<ProfileDatabase>();
-            await profileDatabase.LoadProfilesAsync();
-            Log.Information("Profils heuristiques chargés");
-
-            // Initialiser la détection de périphérique audio
-            var audioDeviceService = _serviceProvider.GetRequiredService<IAudioDeviceService>();
-            await audioDeviceService.InitializeAsync();
-            Log.Information("Détection de périphérique audio initialisée");
-
             // Initialiser le service de volume système (correction calculs SPL)
             var systemVolumeService = _serviceProvider.GetRequiredService<ISystemVolumeService>();
             await systemVolumeService.InitializeAsync();
             Log.Information("Service de volume système initialisé");
 
-            // Initialiser le gestionnaire de mode d'estimation (Phase 5)
+            // Initialiser le gestionnaire d'estimation
             var estimationModeManager = _serviceProvider.GetRequiredService<IEstimationModeManager>();
             estimationModeManager.Initialize();
-            Log.Information("Gestionnaire de mode d'estimation initialisé");
-
-            // Appliquer ForceModeA depuis les settings (Phase 7)
-            if (settingsService.Settings.ForceModeA)
-            {
-                estimationModeManager.SetForceModeA(true);
-                Log.Information("Mode A forcé depuis les settings");
-            }
+            Log.Information("Gestionnaire d'estimation initialisé");
         }
         catch (Exception ex)
         {
