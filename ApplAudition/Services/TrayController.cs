@@ -362,7 +362,7 @@ public class TrayController : ITrayController
         try
         {
             // Chemin vers l'icône dans le projet
-            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "app.ico");
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "icon.ico");
 
             if (File.Exists(iconPath))
             {

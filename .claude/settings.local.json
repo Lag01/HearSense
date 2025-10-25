@@ -27,7 +27,8 @@
       "Bash(Select-String -Pattern \"error|warning\")",
       "Bash(Select-Object -First 30)",
       "Bash(tasklist:*)",
-      "Bash(Select-String -Pattern \"ApplAudition\")"
+      "Bash(Select-String -Pattern \"ApplAudition\")",
+      "Read(//c/Users/lumin/AppData/Local/ApplAudition/**)"
     ],
     "deny": [],
     "ask": []

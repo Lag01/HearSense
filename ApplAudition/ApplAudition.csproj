@@ -10,8 +10,7 @@
     <LangVersion>12</LangVersion>
 
     <!-- Configuration de l'icône de l'application -->
-    <!-- Décommentez cette ligne après avoir placé votre fichier app.ico dans le dossier Resources/ -->
-    <!-- <ApplicationIcon>Resources\app.ico</ApplicationIcon> -->
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,9 +22,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   </ItemGroup>
 
-  <!-- Inclure l'icône comme ressource intégrée -->
+  <!-- Inclure l'icône comme ressource intégrée ET copier vers le répertoire de sortie -->
   <ItemGroup>
-    <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\icon.ico" />
+    <None Include="Resources\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

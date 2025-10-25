@@ -6,6 +6,7 @@
         xmlns:controls="clr-namespace:ApplAudition.Controls"
         mc:Ignorable="d"
         Title=""
+        Icon="/Resources/icon.ico"
         Height="230"
         Width="280"
         WindowStyle="None"

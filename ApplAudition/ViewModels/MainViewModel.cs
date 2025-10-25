@@ -107,6 +107,10 @@ public partial class MainViewModel : BaseViewModel
     private int _displayThrottleCounter = 0;
     private const int DISPLAY_THROTTLE_INTERVAL = 3; // Afficher tous les 3 buffers (375ms)
 
+    // Throttling spécifique pour le graphique LiveCharts2
+    private int _chartThrottleCounter = 0;
+    private const int CHART_THROTTLE_INTERVAL = 4; // Ajouter un point tous les 4 buffers (500ms)
+
     public MainViewModel(
         IAudioCaptureService audioCaptureService,
         IDspEngine dspEngine,
@@ -404,12 +408,15 @@ public partial class MainViewModel : BaseViewModel
             }
 
             // ÉTAPE 8 : Ajouter point au graphe historique (Phase 6) + export CSV (Phase 9)
-            // Important : toujours ajouter au graphe, même si l'affichage n'est pas mis à jour
-            // Utilise la valeur lissée pour cohérence avec l'affichage
-            App.Current.Dispatcher.Invoke(() =>
+            // Throttling : ajouter un point au graphe tous les 500ms (4 buffers) pour meilleures performances
+            _chartThrottleCounter++;
+            if (_chartThrottleCounter % CHART_THROTTLE_INTERVAL == 0)
             {
-                AddDataPoint(smoothedSpl, dspResult.DbFs, leq, peak);
-            });
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    AddDataPoint(smoothedSpl, dspResult.DbFs, leq, peak);
+                });
+            }
 
             // Log périodique (toutes les 2 secondes ≈ 16 buffers)
             if (_leqCalculator.GetSampleCount() % 16 == 0)
@@ -471,8 +478,8 @@ public partial class MainViewModel : BaseViewModel
         // Ajouter le point au graphe LiveCharts2 (Phase 6 - Tâche 15)
         _chartValues.Add(new ObservablePoint(elapsedSeconds, dbAValue));
 
-        // Log périodique pour debugging (tous les 50 points)
-        if (_chartValues.Count % 50 == 0)
+        // Log périodique pour debugging (tous les 20 points ≈ toutes les 10 secondes)
+        if (_chartValues.Count % 20 == 0)
         {
             _logger.Debug("Graphe LiveCharts2: {Count} points, dernier point: ({X:F1}s, {Y:F1} dB(A))",
                 _chartValues.Count, elapsedSeconds, dbAValue);
@@ -484,23 +491,64 @@ public partial class MainViewModel : BaseViewModel
             _chartValues.RemoveAt(0);
         }
 
-        // Ajuster l'axe X si le temps dépasse 3 minutes (scroll automatique)
-        if (elapsedSeconds > 180)
-        {
-            XAxes[0].MinLimit = elapsedSeconds - 180;
-            XAxes[0].MaxLimit = elapsedSeconds;
-        }
-
-        // Buffer circulaire pour l'historique interne
+        // Buffer circulaire pour l'historique interne et export
         while (HistoryData.Count > MAX_HISTORY_POINTS)
         {
             HistoryData.RemoveAt(0);
         }
-
-        // Buffer circulaire pour l'historique d'export (Phase 9 - Tâche 21)
         while (ExportHistoryData.Count > MAX_HISTORY_POINTS)
         {
             ExportHistoryData.RemoveAt(0);
+        }
+
+        // Auto-scaling de l'axe X si le temps dépasse 3 minutes (scroll automatique)
+        // IMPORTANT : Recréer l'objet Axis pour déclencher la notification MVVM
+        if (elapsedSeconds > 180)
+        {
+            XAxes = new Axis[]
+            {
+                new Axis
+                {
+                    Name = "Temps (s)",
+                    NameTextSize = 12,
+                    TextSize = 10,
+                    MinLimit = elapsedSeconds - 180,
+                    MaxLimit = elapsedSeconds,
+                    ForceStepToMin = false,
+                    MinStep = 10
+                }
+            };
+        }
+
+        // Auto-scaling de l'axe Y basé sur les données réelles (min/max des valeurs visibles)
+        // Calculer seulement toutes les 10 secondes pour les performances
+        if (_chartValues.Count % 20 == 0 && _chartValues.Count > 0)
+        {
+            double minValue = _chartValues.Min(p => p.Y ?? 0);
+            double maxValue = _chartValues.Max(p => p.Y ?? 120);
+
+            // Ajouter une marge de 10% pour la lisibilité
+            double margin = (maxValue - minValue) * 0.1;
+            double yMin = Math.Max(0, minValue - margin);
+            double yMax = Math.Min(120, maxValue + margin);
+
+            // Arrondir aux multiples de 10 pour des valeurs propres
+            yMin = Math.Floor(yMin / 10) * 10;
+            yMax = Math.Ceiling(yMax / 10) * 10;
+
+            // Recréer l'axe Y pour notification MVVM
+            YAxes = new Axis[]
+            {
+                new Axis
+                {
+                    Name = "dB(A)",
+                    NameTextSize = 12,
+                    TextSize = 10,
+                    MinLimit = yMin,
+                    MaxLimit = yMax,
+                    ForceStepToMin = false
+                }
+            };
         }
 
         // Notifier que l'état de CanExportCsv peut avoir changé
