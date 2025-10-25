@@ -25,7 +25,33 @@ public partial class MainWindow : Window
         // Hook événement fermeture pour minimiser vers tray
         Closing += OnWindowClosing;
 
+        // WORKAROUND pour bug LiveCharts2 : le graphique ne s'affiche pas au démarrage
+        // On force un rafraîchissement après le chargement de la fenêtre
+        Loaded += OnWindowLoaded;
+
         // Le tray est maintenant initialisé dans App.xaml.cs au démarrage
+    }
+
+    /// <summary>
+    /// Gère le chargement de la fenêtre : force le rafraîchissement du graphique LiveCharts2.
+    /// WORKAROUND pour bug connu : le graphique ne s'affiche pas au démarrage sans rafraîchissement forcé.
+    /// </summary>
+    private async void OnWindowLoaded(object sender, RoutedEventArgs e)
+    {
+        // Attendre que tout soit bien initialisé
+        await Task.Delay(200);
+
+        // Méthode 1 : Forcer un micro-redimensionnement de la fenêtre
+        // Cela déclenche le rendu SkiaSharp du graphique
+        double originalWidth = Width;
+        Width = originalWidth + 1;
+        await Task.Delay(10);
+        Width = originalWidth;
+
+        // Méthode 2 (alternative) : Forcer le rafraîchissement du contrôle CartesianChart
+        ChartControl?.InvalidateVisual();
+        ChartControl?.InvalidateMeasure();
+        ChartControl?.InvalidateArrange();
     }
 
     /// <summary>

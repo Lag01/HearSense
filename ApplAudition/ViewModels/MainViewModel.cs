@@ -382,7 +382,12 @@ public partial class MainViewModel : BaseViewModel
             float smoothedSpl = CalculateSmoothDbA(estimatedSpl);
 
             // ÉTAPE 6 : Catégoriser l'exposition basée sur le SPL lissé (pas sur dBFS)
-            var category = _exposureCategorizer.CategorizeExposure(smoothedSpl);
+            // Utiliser les 3 seuils personnalisables depuis les settings
+            var category = _exposureCategorizer.CategorizeExposure(
+                smoothedSpl,
+                _settingsService.Settings.ThresholdWarning,
+                _settingsService.Settings.ThresholdDanger,
+                _settingsService.Settings.ThresholdCritical);
 
             // ÉTAPE 6.5 : Vérifier le seuil critique et notifier si nécessaire
             _notificationManager.CheckThreshold(smoothedSpl);
@@ -501,8 +506,8 @@ public partial class MainViewModel : BaseViewModel
             ExportHistoryData.RemoveAt(0);
         }
 
-        // Auto-scaling de l'axe X si le temps dépasse 3 minutes (scroll automatique)
-        // IMPORTANT : Recréer l'objet Axis pour déclencher la notification MVVM
+        // Auto-scroll de l'axe X si le temps dépasse 3 minutes (scroll automatique)
+        // Permet de suivre les données en temps réel au-delà de 180s
         if (elapsedSeconds > 180)
         {
             XAxes = new Axis[]
@@ -516,37 +521,6 @@ public partial class MainViewModel : BaseViewModel
                     MaxLimit = elapsedSeconds,
                     ForceStepToMin = false,
                     MinStep = 10
-                }
-            };
-        }
-
-        // Auto-scaling de l'axe Y basé sur les données réelles (min/max des valeurs visibles)
-        // Calculer seulement toutes les 10 secondes pour les performances
-        if (_chartValues.Count % 20 == 0 && _chartValues.Count > 0)
-        {
-            double minValue = _chartValues.Min(p => p.Y ?? 0);
-            double maxValue = _chartValues.Max(p => p.Y ?? 120);
-
-            // Ajouter une marge de 10% pour la lisibilité
-            double margin = (maxValue - minValue) * 0.1;
-            double yMin = Math.Max(0, minValue - margin);
-            double yMax = Math.Min(120, maxValue + margin);
-
-            // Arrondir aux multiples de 10 pour des valeurs propres
-            yMin = Math.Floor(yMin / 10) * 10;
-            yMax = Math.Ceiling(yMax / 10) * 10;
-
-            // Recréer l'axe Y pour notification MVVM
-            YAxes = new Axis[]
-            {
-                new Axis
-                {
-                    Name = "dB(A)",
-                    NameTextSize = 12,
-                    TextSize = 10,
-                    MinLimit = yMin,
-                    MaxLimit = yMax,
-                    ForceStepToMin = false
                 }
             };
         }

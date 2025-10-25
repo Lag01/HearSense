@@ -28,10 +28,12 @@
             </Grid.ColumnDefinitions>
 
             <!-- Barre de progression stylisée -->
-            <Border Grid.Column="0"
+            <Border x:Name="GaugeBarContainer"
+                    Grid.Column="0"
                     Background="#F0F0F0"
                     CornerRadius="10"
-                    Height="60"
+                    MinHeight="40"
+                    MaxHeight="60"
                     Margin="0,0,20,0">
                 <Grid>
                     <!-- Barre colorée animée -->
@@ -45,22 +47,31 @@
                         </Border.RenderTransform>
                     </Border>
 
-                    <!-- Marqueurs de seuils (75, 95 et 110 dB(A)) -->
-                    <Canvas>
-                        <!-- Marqueur 75 dB(A) -->
-                        <Line X1="219" Y1="0" X2="219" Y2="60"
+                    <!-- Marqueurs de seuils (positions dynamiques calculées) -->
+                    <Canvas x:Name="MarkersCanvas">
+                        <!-- Marqueur 1 : 70 dB(A) - transition Vert → Orange -->
+                        <Line X1="{Binding Marker1Position, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Y1="0"
+                              X2="{Binding Marker1Position, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Y2="60"
                               Stroke="Gray"
                               StrokeThickness="1"
                               StrokeDashArray="2,2"
                               Opacity="0.5"/>
-                        <!-- Marqueur 95 dB(A) -->
-                        <Line X1="277" Y1="0" X2="277" Y2="60"
+                        <!-- Marqueur 2 : 85 dB(A) - transition Orange → Rouge -->
+                        <Line X1="{Binding Marker2Position, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Y1="0"
+                              X2="{Binding Marker2Position, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Y2="60"
                               Stroke="Gray"
                               StrokeThickness="1"
                               StrokeDashArray="2,2"
                               Opacity="0.5"/>
-                        <!-- Marqueur 110 dB(A) -->
-                        <Line X1="321" Y1="0" X2="321" Y2="60"
+                        <!-- Marqueur 3 : 100 dB(A) - transition Rouge → Rouge très foncé -->
+                        <Line X1="{Binding Marker3Position, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Y1="0"
+                              X2="{Binding Marker3Position, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Y2="60"
                               Stroke="Gray"
                               StrokeThickness="1"
                               StrokeDashArray="2,2"

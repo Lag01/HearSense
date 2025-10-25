@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Title="Appli Audition - Niveau sonore"
         Icon="/Resources/icon.ico"
-        Height="550"
+        Height="650"
         Width="700"
-        MinHeight="400"
+        MinHeight="500"
         MinWidth="500"
         WindowStartupLocation="CenterScreen">
 
@@ -74,7 +74,7 @@
                 <controls:DbGauge Value="{Binding CurrentDbA}"
                                   Category="{Binding ExposureCategory}"
                                   ModeLabel="dB(A)"
-                                  Height="180"/>
+                                  MaxHeight="150"/>
 
                 <!-- Avertissement discret -->
                 <TextBlock Text="Estimation du niveau sonore - Valeur indicative"
@@ -92,7 +92,7 @@
                 BorderBrush="LightGray"
                 BorderThickness="1"
                 CornerRadius="12"
-                Padding="20"
+                Padding="15"
                 Background="White"
                 Visibility="{Binding IsSpeakerDetected, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
             <Grid>
@@ -109,7 +109,8 @@
                            Margin="0,0,0,10"/>
 
                 <!-- Graphe LiveCharts2 -->
-                <lvc:CartesianChart Grid.Row="1"
+                <lvc:CartesianChart x:Name="ChartControl"
+                                    Grid.Row="1"
                                     Series="{Binding Series}"
                                     XAxes="{Binding XAxes}"
                                     YAxes="{Binding YAxes}"

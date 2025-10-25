@@ -103,16 +103,21 @@ public partial class App : System.Windows.Application
         var settingsService = _serviceProvider.GetRequiredService<ISettingsService>();
         bool startMinimized = e.Args.Contains("--minimized") || settingsService.Settings.StartMinimized;
 
+        // IMPORTANT : TOUJOURS afficher la fenêtre pour initialiser le contexte de rendu WPF/LiveCharts2
+        // Sans cela, le contrôle CartesianChart ne peut pas créer son contexte SkiaSharp
+        mainWindow.Show();
+
         if (startMinimized)
         {
-            // Démarrage minimisé : ne pas afficher la fenêtre
+            // Démarrage minimisé : cacher la fenêtre immédiatement après l'initialisation
+            // Délai de 100ms pour garantir que le contexte de rendu est créé
+            await Task.Delay(100);
+            mainWindow.Hide();
             Log.Information("Application démarrée en mode minimisé (system tray)");
-            // Ne pas appeler mainWindow.Show()
         }
         else
         {
-            // Démarrage normal : afficher la fenêtre
-            mainWindow.Show();
+            // Démarrage normal : la fenêtre reste visible
             Log.Information("Application démarrée en mode normal (fenêtre visible)");
         }
     }

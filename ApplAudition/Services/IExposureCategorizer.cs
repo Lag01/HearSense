@@ -14,8 +14,9 @@ public interface IExposureCategorizer
     /// <param name="dbA">Niveau sonore en dB(A)</param>
     /// <param name="warningThreshold">Seuil d'avertissement (orange) en dB(A)</param>
     /// <param name="dangerThreshold">Seuil de danger (rouge) en dB(A)</param>
+    /// <param name="criticalThreshold">Seuil critique (rouge très foncé) en dB(A)</param>
     /// <returns>Catégorie d'exposition</returns>
-    ExposureCategory CategorizeExposure(float dbA, float warningThreshold, float dangerThreshold);
+    ExposureCategory CategorizeExposure(float dbA, float warningThreshold, float dangerThreshold, float criticalThreshold);
 
     /// <summary>
     /// Catégorise un niveau sonore en dB(A) selon les seuils par défaut.

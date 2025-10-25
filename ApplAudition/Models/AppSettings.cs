@@ -19,6 +19,12 @@ public class AppSettings
     public float ThresholdDanger { get; set; } = 85.0f;
 
     /// <summary>
+    /// Seuil critique (rouge très foncé) en dB(A).
+    /// Défaut : 100 dB(A) (risque immédiat de dommage auditif sévère).
+    /// </summary>
+    public float ThresholdCritical { get; set; } = 100.0f;
+
+    /// <summary>
     /// Indique si l'application doit démarrer automatiquement avec Windows.
     /// </summary>
     public bool StartWithWindows { get; set; }

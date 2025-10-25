@@ -22,8 +22,9 @@ public class ExposureCategorizer : IExposureCategorizer
     /// <param name="dbA">Niveau sonore en dB(A)</param>
     /// <param name="warningThreshold">Seuil d'avertissement (orange) en dB(A)</param>
     /// <param name="dangerThreshold">Seuil de danger (rouge) en dB(A)</param>
+    /// <param name="criticalThreshold">Seuil critique (rouge très foncé) en dB(A)</param>
     /// <returns>Catégorie d'exposition</returns>
-    public ExposureCategory CategorizeExposure(float dbA, float warningThreshold, float dangerThreshold)
+    public ExposureCategory CategorizeExposure(float dbA, float warningThreshold, float dangerThreshold, float criticalThreshold)
     {
         // Gérer les valeurs invalides (NaN, Infinity, valeurs extrêmes)
         if (float.IsNaN(dbA) || float.IsInfinity(dbA) || dbA < -120.0f)
@@ -32,7 +33,7 @@ public class ExposureCategorizer : IExposureCategorizer
             return ExposureCategory.Safe;
         }
 
-        // Catégorisation selon les seuils personnalisés
+        // Catégorisation selon les seuils personnalisés (4 niveaux)
         if (dbA < warningThreshold)
         {
             return ExposureCategory.Safe; // Vert : en dessous du seuil d'avertissement
@@ -41,20 +42,24 @@ public class ExposureCategorizer : IExposureCategorizer
         {
             return ExposureCategory.Moderate; // Orange : entre avertissement et danger
         }
+        else if (dbA < criticalThreshold)
+        {
+            return ExposureCategory.Hazardous; // Rouge : entre danger et critique
+        }
         else
         {
-            return ExposureCategory.Hazardous; // Rouge : au-dessus du seuil de danger
+            return ExposureCategory.Critical; // Rouge très foncé : au-dessus du seuil critique
         }
     }
 
     /// <summary>
     /// Catégorise un niveau sonore en dB(A) selon les seuils par défaut.
-    /// Seuils par défaut : Warning = 70 dB(A), Danger = 85 dB(A).
+    /// Seuils par défaut : Warning = 70 dB(A), Danger = 85 dB(A), Critical = 100 dB(A).
     /// </summary>
     /// <param name="dbA">Niveau sonore en dB(A)</param>
     /// <returns>Catégorie d'exposition</returns>
     public ExposureCategory CategorizeExposure(float dbA)
     {
-        return CategorizeExposure(dbA, 70.0f, 85.0f);
+        return CategorizeExposure(dbA, 70.0f, 85.0f, 100.0f);
     }
 }
