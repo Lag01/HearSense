@@ -31,7 +31,8 @@
       "Read(//c/Users/lumin/AppData/Local/ApplAudition/**)",
       "WebSearch",
       "WebFetch(domain:stackoverflow.com)",
-      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\")"
+      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\")",
+      "Bash(Start-Process \"C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\ApplAudition\\bin\\Debug\\net8.0-windows10.0.19041.0\\ApplAudition.exe\")"
     ],
     "deny": [],
     "ask": []

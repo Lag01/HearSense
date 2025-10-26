@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title=""
         Icon="/Resources/icon.ico"
-        Height="230"
+        Height="280"
         Width="280"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -46,7 +46,7 @@
                               Value="{Binding CurrentDbA}"
                               Category="{Binding ExposureCategory}"
                               ModeLabel="dB(A)"
-                              Height="120"
+                              Height="160"
                               Margin="0,5"/>
 
             <!-- Boutons d'action -->

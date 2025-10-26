@@ -91,6 +91,10 @@ public partial class DbGauge : System.Windows.Controls.UserControl
     public static readonly DependencyProperty Marker3PositionProperty =
         DependencyProperty.Register(nameof(Marker3Position), typeof(double), typeof(DbGauge), new PropertyMetadata(0.0)); // 100 dB
 
+    // Hauteur des marqueurs (calculée dynamiquement selon la hauteur du conteneur)
+    public static readonly DependencyProperty MarkerHeightProperty =
+        DependencyProperty.Register(nameof(MarkerHeight), typeof(double), typeof(DbGauge), new PropertyMetadata(60.0));
+
     public string ValueText
     {
         get => (string)GetValue(ValueTextProperty);
@@ -133,6 +137,12 @@ public partial class DbGauge : System.Windows.Controls.UserControl
         set => SetValue(Marker3PositionProperty, value);
     }
 
+    public double MarkerHeight
+    {
+        get => (double)GetValue(MarkerHeightProperty);
+        set => SetValue(MarkerHeightProperty, value);
+    }
+
     #endregion
 
     // Constante pour l'échelle max de la jauge (0-120 dB)
@@ -173,18 +183,24 @@ public partial class DbGauge : System.Windows.Controls.UserControl
 
     /// <summary>
     /// Met à jour les positions des marqueurs basées sur la largeur réelle du conteneur.
+    /// Met également à jour la hauteur des marqueurs basée sur la hauteur du conteneur.
     /// </summary>
     private void UpdateMarkerPositions()
     {
         if (GaugeBarContainer == null) return;
 
         double availableWidth = GaugeBarContainer.ActualWidth;
+        double availableHeight = GaugeBarContainer.ActualHeight;
+
         if (availableWidth <= 0) return;
 
         // Calculer positions en pourcentage de la largeur disponible
         Marker1Position = (70.0 / MAX_DB_VALUE) * availableWidth;   // 70 dB : 58.3%
         Marker2Position = (85.0 / MAX_DB_VALUE) * availableWidth;   // 85 dB : 70.8%
         Marker3Position = (100.0 / MAX_DB_VALUE) * availableWidth;  // 100 dB : 83.3%
+
+        // Mettre à jour la hauteur des marqueurs pour qu'ils s'adaptent à la hauteur du conteneur
+        MarkerHeight = availableHeight > 0 ? availableHeight : 60.0;
     }
 
     private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
