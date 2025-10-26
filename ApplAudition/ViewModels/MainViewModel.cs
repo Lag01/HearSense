@@ -5,6 +5,7 @@ using ApplAudition.Services;
 using Serilog;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
@@ -30,6 +31,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly INotificationManager _notificationManager;
     private readonly ITrayController _trayController;
     private readonly IServiceProvider _serviceProvider;
+    private readonly AudioDeviceChangeNotifier _deviceChangeNotifier;
     private readonly ILogger _logger;
 
 
@@ -122,6 +124,7 @@ public partial class MainViewModel : BaseViewModel
         IExportService exportService,
         INotificationManager notificationManager,
         ITrayController trayController,
+        AudioDeviceChangeNotifier deviceChangeNotifier,
         IServiceProvider serviceProvider,
         ILogger logger)
     {
@@ -135,12 +138,17 @@ public partial class MainViewModel : BaseViewModel
         _exportService = exportService;
         _notificationManager = notificationManager;
         _trayController = trayController;
+        _deviceChangeNotifier = deviceChangeNotifier;
         _serviceProvider = serviceProvider;
         _logger = logger;
 
         // Souscrire aux événements du service de capture
         _audioCaptureService.DataAvailable += OnAudioDataAvailable;
         _audioCaptureService.ErrorOccurred += OnErrorOccurred;
+
+        // Souscrire aux changements de périphérique audio
+        _deviceChangeNotifier.DefaultDeviceChanged += OnDefaultDeviceChanged;
+        _deviceChangeNotifier.Start();
 
         // Timer UI pour refresh fluide (30 Hz = ~33ms) - Phase 6 Tâche 13
         _uiRefreshTimer = new DispatcherTimer
@@ -151,6 +159,11 @@ public partial class MainViewModel : BaseViewModel
 
         // Initialiser le graphe LiveCharts2 (Phase 6 - Tâche 15)
         InitializeChart();
+
+        // Activer la synchronisation thread-safe pour la collection du graphe
+        BindingOperations.EnableCollectionSynchronization(_chartValues, new object());
+
+        _logger.Information("MainViewModel initialisé avec synchronisation thread-safe");
 
         // DÉMARRAGE AUTOMATIQUE : Lancer la capture audio dès que possible
         // On utilise Dispatcher.BeginInvoke pour éviter de bloquer le constructeur
@@ -399,7 +412,8 @@ public partial class MainViewModel : BaseViewModel
             // Afficher seulement tous les N buffers (ex: 3 × 125ms = 375ms)
             if (_displayThrottleCounter % DISPLAY_THROTTLE_INTERVAL == 0)
             {
-                App.Current.Dispatcher.Invoke(() =>
+                // Utiliser BeginInvoke (asynchrone, non-bloquant) au lieu de Invoke
+                App.Current.Dispatcher.BeginInvoke(() =>
                 {
                     CurrentDbfs = dspResult.DbFs;
                     CurrentDbA = smoothedSpl; // Valeur lissée pour affichage confortable
@@ -409,7 +423,7 @@ public partial class MainViewModel : BaseViewModel
 
                     // Mettre à jour le tooltip du tray en temps réel
                     _trayController.UpdateTooltip(smoothedSpl, category);
-                });
+                }, DispatcherPriority.Background); // Priorité basse pour ne pas bloquer UI
             }
 
             // ÉTAPE 8 : Ajouter point au graphe historique (Phase 6) + export CSV (Phase 9)
@@ -417,10 +431,11 @@ public partial class MainViewModel : BaseViewModel
             _chartThrottleCounter++;
             if (_chartThrottleCounter % CHART_THROTTLE_INTERVAL == 0)
             {
-                App.Current.Dispatcher.Invoke(() =>
+                // Utiliser BeginInvoke (asynchrone, non-bloquant) au lieu de Invoke
+                App.Current.Dispatcher.BeginInvoke(() =>
                 {
                     AddDataPoint(smoothedSpl, dspResult.DbFs, leq, peak);
-                });
+                }, DispatcherPriority.Background); // Priorité basse pour ne pas bloquer UI
             }
 
             // Log périodique (toutes les 2 secondes ≈ 16 buffers)
@@ -443,6 +458,56 @@ public partial class MainViewModel : BaseViewModel
         IsCapturing = false;
     }
 
+    /// <summary>
+    /// Gestionnaire de l'événement de changement de périphérique audio par défaut.
+    /// Redémarre automatiquement la capture avec le nouveau périphérique.
+    /// </summary>
+    private async void OnDefaultDeviceChanged(object? sender, DefaultDeviceChangedEventArgs e)
+    {
+        try
+        {
+            _logger.Information("Changement de périphérique audio détecté : {DeviceName}", e.DeviceName);
+
+            // Afficher un message à l'utilisateur
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                StatusMessage = $"Changement de périphérique : {e.DeviceName}...";
+            });
+
+            // Afficher notification tray
+            _trayController.ShowBalloonTip(
+                "Périphérique audio changé",
+                $"Redémarrage de la capture avec : {e.DeviceName}",
+                timeout: 3000
+            );
+
+            // Redémarrer la capture avec le nouveau périphérique
+            await _audioCaptureService.RestartAsync();
+
+            // Mettre à jour le statut
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                StatusMessage = $"Périphérique : {e.DeviceName}";
+            });
+
+            _logger.Information("Capture redémarrée avec succès après changement de périphérique");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors du changement de périphérique audio");
+
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                StatusMessage = $"Erreur lors du changement de périphérique : {ex.Message}";
+            });
+
+            _trayController.ShowBalloonTip(
+                "Erreur",
+                "Impossible de redémarrer la capture. Redémarrez l'application.",
+                timeout: 5000
+            );
+        }
+    }
 
     /// <summary>
     /// Handler du timer UI pour refresh fluide (Phase 6 - Tâche 13).

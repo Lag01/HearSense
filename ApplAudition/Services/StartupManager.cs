@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using Microsoft.Win32;
 using Serilog;
 
@@ -22,17 +23,33 @@ public class StartupManager : IStartupManager
     }
 
     /// <summary>
-    /// Obtient le chemin complet de l'exécutable actuel.
+    /// Obtient le chemin complet de l'exécutable actuel avec validation de sécurité.
     /// </summary>
     private string GetExecutablePath()
     {
         var process = Process.GetCurrentProcess();
-        var exePath = process.MainModule?.FileName;
+        var mainModule = process.MainModule;
 
-        if (string.IsNullOrEmpty(exePath))
+        if (mainModule == null || string.IsNullOrWhiteSpace(mainModule.FileName))
         {
-            _logger.Error("Impossible de récupérer le chemin de l'exécutable");
-            throw new InvalidOperationException("Chemin de l'exécutable introuvable");
+            _logger.Error("Impossible de récupérer le module principal");
+            throw new UnauthorizedAccessException("Accès au module refusé");
+        }
+
+        var exePath = mainModule.FileName;
+
+        // Validation : doit être un chemin absolu valide
+        if (!Path.IsPathFullyQualified(exePath))
+        {
+            _logger.Error("Chemin invalide (non absolu) : {ExePath}", exePath);
+            throw new InvalidOperationException($"Chemin invalide : {exePath}");
+        }
+
+        // Vérifier que le fichier existe
+        if (!File.Exists(exePath))
+        {
+            _logger.Error("Exécutable introuvable : {ExePath}", exePath);
+            throw new FileNotFoundException($"Exécutable introuvable : {exePath}");
         }
 
         return exePath;

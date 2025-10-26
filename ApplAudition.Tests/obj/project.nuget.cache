@@ -106,7 +106,7 @@
     {
       "code": "NU1201",
       "level": "Error",
-      "message": "Project ApplAudition is not compatible with net8.0-windows7.0 (.NETCoreApp,Version=v8.0). Project ApplAudition supports: net8.0-windows10.0.19041 (.NETCoreApp,Version=v8.0)",
+      "message": "Le projet ApplAudition n'est pas compatible avec net8.0-windows7.0 (.NETCoreApp,Version=v8.0). Le projet ApplAudition prend en charge\u00A0: net8.0-windows10.0.19041 (.NETCoreApp,Version=v8.0)",
       "projectPath": "C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\ApplAudition.Tests\\ApplAudition.Tests.csproj",
       "filePath": "C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\ApplAudition.Tests\\ApplAudition.Tests.csproj",
       "libraryId": "ApplAudition",

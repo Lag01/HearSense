@@ -34,12 +34,32 @@ public class ToastNotificationService : IToastNotificationService
                 .AddText(title)
                 .AddText(message);
 
-            // Ajouter l'icône personnalisée si fournie
-            if (!string.IsNullOrEmpty(iconPath) && File.Exists(iconPath))
+            // Ajouter l'icône personnalisée si fournie avec validation de sécurité
+            if (!string.IsNullOrEmpty(iconPath))
             {
-                // Utiliser AppLogoOverride pour définir l'icône de l'application
-                toastContent.AddAppLogoOverride(new Uri($"file:///{iconPath}"), ToastGenericAppLogoCrop.Default);
-                _logger.Debug("Icône personnalisée ajoutée à la notification : {IconPath}", iconPath);
+                try
+                {
+                    // Valider que le chemin est absolu et dans un répertoire autorisé
+                    var fullPath = Path.GetFullPath(iconPath);
+                    var allowedDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources"));
+
+                    if (!fullPath.StartsWith(allowedDirectory, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _logger.Warning("Tentative d'accès à un chemin non autorisé : {IconPath}", iconPath);
+                        return;
+                    }
+
+                    if (File.Exists(fullPath))
+                    {
+                        var uri = new Uri(fullPath, UriKind.Absolute);
+                        toastContent.AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Default);
+                        _logger.Debug("Icône personnalisée ajoutée à la notification : {IconPath}", fullPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warning(ex, "Erreur lors de la validation du chemin de l'icône : {IconPath}", iconPath);
+                }
             }
 
             // Obtenir le contenu XML

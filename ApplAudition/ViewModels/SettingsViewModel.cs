@@ -90,18 +90,49 @@ public partial class SettingsViewModel : BaseViewModel
     {
         try
         {
-            // Valider les entrées
-            if (CriticalThresholdDbA < 40 || CriticalThresholdDbA > 120)
+            // Validation stricte du seuil critique
+            if (float.IsNaN(CriticalThresholdDbA) || float.IsInfinity(CriticalThresholdDbA))
             {
-                StatusMessage = "⚠ Le seuil critique doit être entre 40 et 120 dB(A)";
-                _logger.Warning("Seuil critique invalide : {Threshold}", CriticalThresholdDbA);
+                StatusMessage = "⚠ Valeur invalide pour le seuil critique";
+                _logger.Warning("Seuil critique invalide (NaN/Infinity)");
                 return;
             }
 
+            const float MIN_REALISTIC_THRESHOLD = 60.0f; // En dessous = trop silencieux
+            const float MAX_REALISTIC_THRESHOLD = 110.0f; // Au-dessus = dommages immédiats
+
+            if (CriticalThresholdDbA < MIN_REALISTIC_THRESHOLD || CriticalThresholdDbA > MAX_REALISTIC_THRESHOLD)
+            {
+                StatusMessage = $"⚠ Le seuil critique doit être entre {MIN_REALISTIC_THRESHOLD} et {MAX_REALISTIC_THRESHOLD} dB(A)\n" +
+                               "Recommandation OMS : 85 dB(A) pour 8h/jour maximum";
+                _logger.Warning("Seuil critique hors limites réalistes : {Threshold} dB(A)", CriticalThresholdDbA);
+                return;
+            }
+
+            // Avertissement si valeur dangereusement élevée (> 100 dB)
+            if (CriticalThresholdDbA > 100.0f)
+            {
+                var result = System.Windows.MessageBox.Show(
+                    $"Un seuil de {CriticalThresholdDbA:F0} dB(A) est extrêmement élevé.\n\n" +
+                    "⚠️ DANGER : Vous ne serez averti qu'en cas de niveau très dangereux.\n" +
+                    "Des dommages auditifs irréversibles peuvent survenir avant cette limite.\n\n" +
+                    "Êtes-vous sûr de vouloir définir un seuil aussi élevé ?",
+                    "⚠️ Confirmation - Seuil Critique Élevé",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.Yes)
+                {
+                    _logger.Information("Utilisateur a annulé la définition du seuil élevé : {Threshold} dB(A)", CriticalThresholdDbA);
+                    return;
+                }
+            }
+
+            // Validation du cooldown
             if (NotificationCooldownMinutes < 1 || NotificationCooldownMinutes > 60)
             {
                 StatusMessage = "⚠ Le cooldown doit être entre 1 et 60 minutes";
-                _logger.Warning("Cooldown invalide : {Cooldown}", NotificationCooldownMinutes);
+                _logger.Warning("Cooldown invalide : {Cooldown} minutes", NotificationCooldownMinutes);
                 return;
             }
 

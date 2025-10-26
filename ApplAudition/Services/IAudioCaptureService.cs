@@ -26,6 +26,11 @@ public interface IAudioCaptureService : IDisposable
     Task StopAsync();
 
     /// <summary>
+    /// Redémarre la capture audio avec le périphérique par défaut actuel.
+    /// </summary>
+    Task RestartAsync();
+
+    /// <summary>
     /// Indique si la capture est active.
     /// </summary>
     bool IsCapturing { get; }

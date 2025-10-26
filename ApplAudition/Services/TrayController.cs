@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
+using ApplAudition.Constants;
 using ApplAudition.Models;
 using ApplAudition.Views;
 using Serilog;
@@ -115,9 +116,13 @@ public class TrayController : ITrayController
 
         string tooltip = $"Appli Audition - {currentDbA:F0} dB(A) ({categoryText})";
 
-        // Tronquer si nécessaire (limite Windows)
-        if (tooltip.Length > 63)
-            tooltip = tooltip.Substring(0, 60) + "...";
+        // Windows limite les tooltips NotifyIcon à 63 caractères (64 avec null terminator)
+        // Tronquer proprement si dépassement
+        if (tooltip.Length > AppConstants.MAX_TOOLTIP_LENGTH)
+        {
+            tooltip = tooltip.Substring(0, AppConstants.MAX_TOOLTIP_LENGTH - 3) + "...";
+            _logger.Debug("Tooltip tronqué pour respecter la limite Windows de {MaxLength} caractères", AppConstants.MAX_TOOLTIP_LENGTH);
+        }
 
         _notifyIcon.Text = tooltip;
 
@@ -287,50 +292,66 @@ public class TrayController : ITrayController
 
     /// <summary>
     /// Calcule la position du popup près de l'icône tray.
+    /// Prend en compte le DPI scaling pour un positionnement correct.
     /// </summary>
     private System.Windows.Point GetTrayIconPosition()
     {
         // Obtenir la position de la souris (approximation de l'icône tray)
         var cursorPosition = System.Windows.Forms.Cursor.Position;
 
-        // Obtenir la taille de l'écran de travail
-        var workingArea = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+        // Obtenir l'écran où se trouve le curseur
+        var screen = System.Windows.Forms.Screen.FromPoint(cursorPosition);
+        var workingArea = screen.WorkingArea;
 
-        // Dimensions du popup
+        // Obtenir le facteur de DPI scaling
+        // SystemParameters renvoie des valeurs en DIU (Device Independent Units)
+        // Screen renvoie des valeurs en pixels physiques
+        var dpiScaleX = SystemParameters.PrimaryScreenWidth / System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+        var dpiScaleY = SystemParameters.PrimaryScreenHeight / System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+
+        // Dimensions du popup (en DIU - correspondent aux valeurs XAML)
         const double popupWidth = 280;
         const double popupHeight = 280;
         const double margin = 10; // Marge depuis les bords de l'écran
 
+        // Convertir les coordonnées physiques en DIU
+        double cursorX = cursorPosition.X * dpiScaleX;
+        double cursorY = cursorPosition.Y * dpiScaleY;
+        double workingLeft = workingArea.Left * dpiScaleX;
+        double workingTop = workingArea.Top * dpiScaleY;
+        double workingRight = workingArea.Right * dpiScaleX;
+        double workingBottom = workingArea.Bottom * dpiScaleY;
+
         // Calculer position initiale (centrée horizontalement sur le curseur, au-dessus de la barre des tâches)
-        double x = cursorPosition.X - (popupWidth / 2);
-        double y = workingArea.Bottom - popupHeight - margin;
+        double x = cursorX - (popupWidth / 2);
+        double y = workingBottom - popupHeight - margin;
 
         // Ajuster X si dépasse le bord gauche
-        if (x < workingArea.Left + margin)
+        if (x < workingLeft + margin)
         {
-            x = workingArea.Left + margin;
+            x = workingLeft + margin;
         }
 
         // Ajuster X si dépasse le bord droit
-        if (x + popupWidth > workingArea.Right - margin)
+        if (x + popupWidth > workingRight - margin)
         {
-            x = workingArea.Right - popupWidth - margin;
+            x = workingRight - popupWidth - margin;
         }
 
         // Ajuster Y si dépasse le haut de l'écran (cas rare)
-        if (y < workingArea.Top + margin)
+        if (y < workingTop + margin)
         {
-            y = workingArea.Top + margin;
+            y = workingTop + margin;
         }
 
         // Ajuster Y si dépasse le bas de l'écran
-        if (y + popupHeight > workingArea.Bottom - margin)
+        if (y + popupHeight > workingBottom - margin)
         {
-            y = workingArea.Bottom - popupHeight - margin;
+            y = workingBottom - popupHeight - margin;
         }
 
-        _logger.Debug("Position du popup TrayPopup calculée : X={X}, Y={Y} (Cursor: {CursorX}, {CursorY})",
-            x, y, cursorPosition.X, cursorPosition.Y);
+        _logger.Debug("Position du popup TrayPopup calculée : X={X:F0}, Y={Y:F0} DIU (Cursor: {CursorX}px, {CursorY}px, DPI Scale: {DpiX:F2}x{DpiY:F2})",
+            x, y, cursorPosition.X, cursorPosition.Y, dpiScaleX, dpiScaleY);
 
         return new System.Windows.Point(x, y);
     }

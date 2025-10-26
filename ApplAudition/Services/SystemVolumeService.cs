@@ -30,6 +30,17 @@ public class SystemVolumeService : ISystemVolumeService, IDisposable
     {
         try
         {
+            // Disposer les anciennes ressources si déjà initialisé (éviter memory leak)
+            if (_volumeEndpoint != null)
+            {
+                _volumeEndpoint.OnVolumeNotification -= OnVolumeNotification;
+            }
+
+            if (_device != null)
+            {
+                _device.Dispose();
+            }
+
             // Obtenir le périphérique de sortie par défaut
             var enumerator = new MMDeviceEnumerator();
             _device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);

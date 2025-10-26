@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading;
 using ApplAudition.Services;
 using ApplAudition.ViewModels;
 
@@ -38,20 +39,21 @@ public partial class MainWindow : Window
     /// </summary>
     private async void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
-        // Attendre que tout soit bien initialisé
-        await Task.Delay(200);
+        // Attendre que le layout WPF soit complètement chargé
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Loaded);
+        await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
 
-        // Méthode 1 : Forcer un micro-redimensionnement de la fenêtre
-        // Cela déclenche le rendu SkiaSharp du graphique
-        double originalWidth = Width;
-        Width = originalWidth + 1;
-        await Task.Delay(10);
-        Width = originalWidth;
+        // Forcer le rendu initial du graphique LiveCharts2
+        if (ChartControl != null)
+        {
+            ChartControl.InvalidateVisual();
+            ChartControl.UpdateLayout();
 
-        // Méthode 2 (alternative) : Forcer le rafraîchissement du contrôle CartesianChart
-        ChartControl?.InvalidateVisual();
-        ChartControl?.InvalidateMeasure();
-        ChartControl?.InvalidateArrange();
+            // Logger uniquement en mode Debug
+#if DEBUG
+            Serilog.Log.Debug("Graphique LiveCharts2 forcé au rendu après chargement de la fenêtre");
+#endif
+        }
     }
 
     /// <summary>

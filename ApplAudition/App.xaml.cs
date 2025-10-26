@@ -21,17 +21,31 @@ public partial class App : System.Windows.Application
     /// </summary>
     private void ConfigureServices(IServiceCollection services)
     {
+        // Déterminer le niveau de log selon l'environnement
+#if DEBUG
+        var logLevel = Serilog.Events.LogEventLevel.Debug;
+#else
+        var logLevel = Serilog.Events.LogEventLevel.Information;
+#endif
+
         // Logging
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
+            .MinimumLevel.Is(logLevel)
+            .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) // Réduire logs Microsoft
+            .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning) // Réduire logs System
+            .Enrich.WithProperty("Application", "ApplAudition")
+            .Enrich.WithProperty("Version", "1.568")
             .WriteTo.File(
                 path: System.IO.Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "ApplAudition", "logs", "app-.log"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 10,
-                fileSizeLimitBytes: 10_485_760) // 10 MB
+                fileSizeLimitBytes: 10_485_760, // 10 MB
+                outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
+
+        Log.Information("Application démarrée - Niveau de log : {LogLevel}", logLevel);
 
         services.AddSingleton<ILogger>(Log.Logger);
 
@@ -53,6 +67,9 @@ public partial class App : System.Windows.Application
 
         // Service de volume système (correction calculs SPL)
         services.AddSingleton<ISystemVolumeService, SystemVolumeService>();
+
+        // Détection des changements de périphérique audio
+        services.AddSingleton<AudioDeviceChangeNotifier>();
 
         // System Tray et auto-démarrage
         services.AddSingleton<ITrayController, TrayController>();

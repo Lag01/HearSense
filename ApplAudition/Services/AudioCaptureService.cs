@@ -106,6 +106,46 @@ public class AudioCaptureService : IAudioCaptureService
     }
 
     /// <summary>
+    /// Redémarre la capture audio avec le périphérique par défaut actuel.
+    /// Utilisé lors d'un changement de périphérique audio détecté.
+    /// </summary>
+    public async Task RestartAsync()
+    {
+        _logger.Information("Redémarrage de la capture audio suite à un changement de périphérique");
+
+        try
+        {
+            // Arrêter la capture actuelle
+            await StopAsync();
+
+            // Disposer l'ancienne capture
+            lock (_lock)
+            {
+                if (_capture != null)
+                {
+                    _capture.DataAvailable -= OnDataAvailableInternal;
+                    _capture.RecordingStopped -= OnRecordingStopped;
+                    _capture.Dispose();
+                    _capture = null;
+                }
+            }
+
+            // Petite pause pour laisser le système libérer les ressources
+            await Task.Delay(500);
+
+            // Redémarrer avec le nouveau périphérique
+            await StartAsync();
+
+            _logger.Information("Capture audio redémarrée avec succès");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors du redémarrage de la capture audio");
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Gestionnaire interne des données audio (appelé par NAudio).
     /// Convertit stéréo → mono et notifie les abonnés.
     /// </summary>

@@ -5845,7 +5845,7 @@
     {
       "code": "NU1201",
       "level": "Error",
-      "message": "Project ApplAudition is not compatible with net8.0-windows7.0 (.NETCoreApp,Version=v8.0). Project ApplAudition supports: net8.0-windows10.0.19041 (.NETCoreApp,Version=v8.0)",
+      "message": "Le projet ApplAudition n'est pas compatible avec net8.0-windows7.0 (.NETCoreApp,Version=v8.0). Le projet ApplAudition prend en charge : net8.0-windows10.0.19041 (.NETCoreApp,Version=v8.0)",
       "libraryId": "ApplAudition",
       "targetGraphs": [
         "net8.0-windows7.0"
