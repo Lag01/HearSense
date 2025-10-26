@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ApplAudition.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+babc3e352f2d72736a72d427d9e904de54b25547")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+326d1c4646ef67763f03b6c46ddd67619fb1dd83")]
 [assembly: System.Reflection.AssemblyProductAttribute("ApplAudition.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ApplAudition.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

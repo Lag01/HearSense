@@ -29,7 +29,9 @@
       "Bash(tasklist:*)",
       "Bash(Select-String -Pattern \"ApplAudition\")",
       "Read(//c/Users/lumin/AppData/Local/ApplAudition/**)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:stackoverflow.com)",
+      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\")"
     ],
     "deny": [],
     "ask": []

@@ -1,5 +1,6 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using ApplAudition.Helpers;
 using ApplAudition.Models;
 using ApplAudition.Services;
 using ApplAudition.ViewModels;
@@ -58,6 +59,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IStartupManager, StartupManager>();
 
         // Notifications
+        services.AddSingleton<IToastNotificationService, ToastNotificationService>();
         services.AddSingleton<INotificationManager, NotificationManager>();
 
         // ViewModels (Transient - nouvelle instance à chaque résolution)
@@ -81,6 +83,10 @@ public partial class App : System.Windows.Application
         _serviceProvider = services.BuildServiceProvider();
 
         Log.Information("Application ApplAudition démarrée");
+
+        // Configurer l'AppUserModelID pour les Toast Notifications Windows 10/11
+        // Cela permet à Windows d'identifier correctement l'application
+        AppUserModelHelper.SetAppUserModelId(Log.Logger);
 
         // Initialiser les services requis
         await InitializeServicesAsync();

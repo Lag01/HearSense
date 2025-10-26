@@ -1,15 +1,16 @@
 using Serilog;
+using System.IO;
 
 namespace ApplAudition.Services;
 
 /// <summary>
 /// Gestionnaire de notifications pour les dépassements de seuil critique.
-/// Surveille le niveau dB(A) et envoie des notifications via TrayController.
+/// Surveille le niveau dB(A) et envoie des notifications Toast natives Windows.
 /// </summary>
 public class NotificationManager : INotificationManager
 {
     private readonly ISettingsService _settingsService;
-    private readonly ITrayController _trayController;
+    private readonly IToastNotificationService _toastNotificationService;
     private readonly ILogger _logger;
 
     private DateTime _lastNotificationTime = DateTime.MinValue;
@@ -18,11 +19,11 @@ public class NotificationManager : INotificationManager
 
     public NotificationManager(
         ISettingsService settingsService,
-        ITrayController trayController,
+        IToastNotificationService toastNotificationService,
         ILogger logger)
     {
         _settingsService = settingsService;
-        _trayController = trayController;
+        _toastNotificationService = toastNotificationService;
         _logger = logger;
     }
 
@@ -95,7 +96,7 @@ public class NotificationManager : INotificationManager
     }
 
     /// <summary>
-    /// Envoie une notification de dépassement de seuil via TrayController.
+    /// Envoie une notification de dépassement de seuil via Toast Notification native.
     /// </summary>
     private void SendNotification(float currentDbA, float threshold)
     {
@@ -105,17 +106,21 @@ public class NotificationManager : INotificationManager
             string message = $"Niveau actuel : {currentDbA:F0} dB(A)\n" +
                            $"Limite recommandée : {threshold:F0} dB(A)";
 
-            _trayController.ShowBalloonTip(title, message, timeout: 5000);
+            // Chemin de l'icône personnalisée
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "icon.ico");
+
+            // Utiliser le service Toast Notification avec icône personnalisée
+            _toastNotificationService.ShowToast(title, message, iconPath);
 
             _lastNotificationTime = DateTime.Now;
             _hasNotifiedThisSession = true;
 
-            _logger.Information("Notification envoyée : {CurrentDbA:F1} dB(A) >= {Threshold:F1} dB(A)",
+            _logger.Information("Notification Toast envoyée : {CurrentDbA:F1} dB(A) >= {Threshold:F1} dB(A)",
                 currentDbA, threshold);
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Erreur lors de l'envoi de la notification");
+            _logger.Error(ex, "Erreur lors de l'envoi de la notification Toast");
         }
     }
 

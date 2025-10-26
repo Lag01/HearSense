@@ -132,7 +132,8 @@ public class TrayController : ITrayController
     }
 
     /// <summary>
-    /// Affiche une notification balloon tip.
+    /// Affiche une notification balloon tip (méthode héritée).
+    /// Note : Les notifications critiques utilisent maintenant ToastNotificationService.
     /// </summary>
     public void ShowBalloonTip(string title, string text, int timeout = 3000)
     {
@@ -141,7 +142,7 @@ public class TrayController : ITrayController
 
         try
         {
-            _notifyIcon.ShowBalloonTip(timeout, title, text, ToolTipIcon.Info);
+            _notifyIcon.ShowBalloonTip(timeout, title, text, ToolTipIcon.None);
         }
         catch (Exception ex)
         {
