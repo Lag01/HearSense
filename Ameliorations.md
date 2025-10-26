@@ -1454,8 +1454,11 @@ Avec ces corrections, l'application sera **production-ready** et offrira une exp
 
 ## 📝 Suivi des Corrections Effectuées
 
-**Date des corrections** : 26 octobre 2025
-**Version** : V1.568
+**Date des corrections Phase 1** : 26 octobre 2025
+**Version Phase 1** : V1.568
+
+**Date des corrections Phase 3** : 26 octobre 2025
+**Version Phase 3** : V1.569 (en cours)
 
 ### ✅ Corrections Phase 1 - Implémentées (10/10)
 
@@ -1481,14 +1484,41 @@ Les corrections suivantes n'ont pas été implémentées car elles présentent u
 | - | ArrayPool pour buffers audio | Risque de bugs mémoire complexes |
 | - | Injection IServiceProvider dans TrayController | Changement d'architecture majeur |
 | - | Coefficients A-weighting dynamiques | Risque d'affecter la précision DSP |
-| - | Circuit breaker notifications | Ajout de complexité significatif |
 | - | Retry logic capture audio | Changement de comportement majeur |
+
+### ✅ Corrections Phase 3 - Implémentées (2/2)
+
+**Date** : 26 octobre 2025
+
+Les corrections suivantes ont été implémentées avec succès (faible risque) :
+
+| # | Problème | Fichier | Statut | Commentaire |
+|---|----------|---------|--------|-------------|
+| 1 | Gestion des erreurs trop générique | `App.xaml.cs:151-241` | ✅ **CORRIGÉ** | Catches spécifiques ajoutés (UnauthorizedAccessException, COMException, FileNotFoundException, TypeInitializationException) avec messages utilisateur appropriés |
+| 2 | Circuit breaker pour notifications | `NotificationManager.cs:108-166` | ✅ **CORRIGÉ** | Circuit breaker implémenté (max 3 échecs, reset après 5 min) pour éviter les boucles d'erreurs |
+
+**Détails des corrections** :
+
+**1. Gestion des erreurs améliorée (App.xaml.cs)** :
+- Distinction entre erreurs récupérables et fatales
+- Gestion spécifique des permissions insuffisantes (volume système)
+- Gestion des périphériques audio manquants avec option de réessayer
+- Messages d'erreur clairs et informatifs pour l'utilisateur
+- Shutdown propre en cas d'erreur fatale
+
+**2. Circuit breaker notifications (NotificationManager.cs)** :
+- Suivi des échecs consécutifs (max 3)
+- Désactivation temporaire après 3 échecs (5 minutes)
+- Réactivation automatique après le délai
+- Logs améliorés pour tracer les échecs
+- Reset du compteur sur succès
 
 ### 🎯 Résultat
 
 **Compilation** : ✅ Succès (0 erreurs, 0 avertissements)
 **Tests manuels** : À effectuer par l'utilisateur
-**Impact** : Amélioration significative de la sécurité, performance et robustesse
+**Impact Phase 1** : Amélioration significative de la sécurité, performance et robustesse
+**Impact Phase 3** : Amélioration de la gestion des erreurs et de la résilience
 
 ---
 

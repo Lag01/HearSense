@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using ApplAudition.Helpers;
@@ -161,19 +162,82 @@ public partial class App : System.Windows.Application
             ApplyLightTheme();
 
             // Initialiser le service de volume système (correction calculs SPL)
-            var systemVolumeService = _serviceProvider.GetRequiredService<ISystemVolumeService>();
-            await systemVolumeService.InitializeAsync();
-            Log.Information("Service de volume système initialisé");
+            try
+            {
+                var systemVolumeService = _serviceProvider.GetRequiredService<ISystemVolumeService>();
+                await systemVolumeService.InitializeAsync();
+                Log.Information("Service de volume système initialisé");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Log.Warning(ex, "Permissions insuffisantes pour accéder au volume système");
+                System.Windows.MessageBox.Show(
+                    "⚠️ Impossible d'accéder au volume système Windows.\n\n" +
+                    "L'estimation du niveau sonore sera moins précise.\n" +
+                    "Pour une meilleure précision, redémarrez l'application avec les droits administrateur.",
+                    "Avertissement - Permissions Limitées",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+            catch (System.Runtime.InteropServices.COMException ex) when (ex.HResult == unchecked((int)0x80070490))
+            {
+                Log.Error(ex, "Aucun périphérique audio détecté");
+                var result = System.Windows.MessageBox.Show(
+                    "❌ Aucun périphérique audio détecté.\n\n" +
+                    "Branchez un casque ou des haut-parleurs et cliquez sur 'Réessayer'.\n" +
+                    "Ou cliquez sur 'Annuler' pour quitter l'application.",
+                    "Erreur - Aucun Périphérique Audio",
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Error);
+
+                if (result == MessageBoxResult.Cancel)
+                {
+                    System.Windows.Application.Current.Shutdown(1);
+                    return;
+                }
+            }
 
             // Initialiser le gestionnaire d'estimation
             var estimationModeManager = _serviceProvider.GetRequiredService<IEstimationModeManager>();
             estimationModeManager.Initialize();
             Log.Information("Gestionnaire d'estimation initialisé");
         }
+        catch (FileNotFoundException ex)
+        {
+            Log.Fatal(ex, "Fichier de configuration critique introuvable");
+            System.Windows.MessageBox.Show(
+                $"❌ Fichier de configuration introuvable.\n\n" +
+                $"Détails : {ex.Message}\n\n" +
+                "Réinstallez l'application pour corriger ce problème.",
+                "Erreur Fatale",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            System.Windows.Application.Current.Shutdown(1);
+        }
+        catch (TypeInitializationException ex)
+        {
+            Log.Fatal(ex, "Erreur d'initialisation d'un composant critique");
+            System.Windows.MessageBox.Show(
+                $"❌ Erreur d'initialisation d'un composant critique.\n\n" +
+                $"Détails : {ex.InnerException?.Message ?? ex.Message}\n\n" +
+                "Vérifiez que .NET 8 Runtime est installé.",
+                "Erreur Fatale",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            System.Windows.Application.Current.Shutdown(1);
+        }
         catch (Exception ex)
         {
-            Log.Error(ex, "Erreur lors de l'initialisation des services");
-            // L'application peut continuer en mode dégradé (Mode A uniquement)
+            Log.Fatal(ex, "Erreur inattendue lors de l'initialisation des services");
+            System.Windows.MessageBox.Show(
+                $"❌ Erreur inattendue empêchant le démarrage.\n\n" +
+                $"Type : {ex.GetType().Name}\n" +
+                $"Message : {ex.Message}\n\n" +
+                "Consultez les logs pour plus de détails.",
+                "Erreur Fatale",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            System.Windows.Application.Current.Shutdown(1);
         }
     }
 

@@ -17,6 +17,13 @@ public class NotificationManager : INotificationManager
     private bool _hasNotifiedThisSession = false;
     private bool _isAboveThreshold = false;
 
+    // Circuit breaker pour éviter les boucles d'erreurs
+    private int _consecutiveFailures = 0;
+    private const int MAX_CONSECUTIVE_FAILURES = 3;
+    private bool _circuitBreakerOpen = false;
+    private DateTime _circuitBreakerResetTime = DateTime.MinValue;
+    private readonly TimeSpan _circuitBreakerResetDuration = TimeSpan.FromMinutes(5);
+
     public NotificationManager(
         ISettingsService settingsService,
         IToastNotificationService toastNotificationService,
@@ -102,6 +109,24 @@ public class NotificationManager : INotificationManager
     {
         try
         {
+            // Vérifier le circuit breaker
+            if (_circuitBreakerOpen)
+            {
+                if (DateTime.Now >= _circuitBreakerResetTime)
+                {
+                    // Réinitialiser le circuit breaker
+                    _circuitBreakerOpen = false;
+                    _consecutiveFailures = 0;
+                    _logger.Information("Circuit breaker des notifications réinitialisé");
+                }
+                else
+                {
+                    // Circuit breaker toujours ouvert, ne pas envoyer
+                    _logger.Debug("Circuit breaker ouvert, notification ignorée");
+                    return;
+                }
+            }
+
             string title = "⚠️ Niveau sonore élevé";
             string message = $"Niveau actuel : {currentDbA:F0} dB(A)\n" +
                            $"Limite recommandée : {threshold:F0} dB(A)";
@@ -114,13 +139,29 @@ public class NotificationManager : INotificationManager
 
             _lastNotificationTime = DateTime.Now;
             _hasNotifiedThisSession = true;
+            _consecutiveFailures = 0; // Reset sur succès
 
             _logger.Information("Notification Toast envoyée : {CurrentDbA:F1} dB(A) >= {Threshold:F1} dB(A)",
                 currentDbA, threshold);
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Erreur lors de l'envoi de la notification Toast");
+            _consecutiveFailures++;
+            _logger.Error(ex, "Erreur lors de l'envoi de la notification Toast (échec {FailureCount}/{MaxFailures})",
+                _consecutiveFailures, MAX_CONSECUTIVE_FAILURES);
+
+            // Ouvrir le circuit breaker après trop d'échecs
+            if (_consecutiveFailures >= MAX_CONSECUTIVE_FAILURES)
+            {
+                _circuitBreakerOpen = true;
+                _circuitBreakerResetTime = DateTime.Now.Add(_circuitBreakerResetDuration);
+
+                _logger.Warning(
+                    "Circuit breaker des notifications ouvert après {FailureCount} échecs consécutifs. " +
+                    "Réinitialisation prévue à {ResetTime}",
+                    _consecutiveFailures,
+                    _circuitBreakerResetTime);
+            }
         }
     }
 
