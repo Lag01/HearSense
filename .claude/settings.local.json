@@ -33,7 +33,9 @@
       "WebFetch(domain:stackoverflow.com)",
       "Bash(Select-String -Pattern \"error|warning|succeeded|failed\")",
       "Bash(Start-Process \"C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\ApplAudition\\bin\\Debug\\net8.0-windows10.0.19041.0\\ApplAudition.exe\")",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(Select-String -Pattern \"rename-\")",
+      "Bash(del ApplAudition.Package.gitignore)"
     ],
     "deny": [],
     "ask": []
