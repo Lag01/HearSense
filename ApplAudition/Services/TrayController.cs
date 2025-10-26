@@ -298,7 +298,7 @@ public class TrayController : ITrayController
 
         // Dimensions du popup
         const double popupWidth = 280;
-        const double popupHeight = 230;
+        const double popupHeight = 280;
         const double margin = 10; // Marge depuis les bords de l'écran
 
         // Calculer position initiale (centrée horizontalement sur le curseur, au-dessus de la barre des tâches)
