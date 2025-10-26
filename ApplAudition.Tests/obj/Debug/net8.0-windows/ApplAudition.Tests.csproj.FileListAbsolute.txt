@@ -1,6 +1,0 @@
-C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.csproj.AssemblyReference.cache
-C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.AssemblyInfoInputs.cache
-C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.AssemblyInfo.cs
-C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.csproj.CoreCompileInputs.cache
-C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition.Tests\obj\Debug\net8.0-windows\ApplAudition.Tests.sourcelink.json

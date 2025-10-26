@@ -1,4 +1,4 @@
-# Appli Audition
+﻿# HearSense
 
 > **Application Windows de surveillance du niveau sonore au casque en temps réel**
 
@@ -10,7 +10,7 @@
 
 ## 📋 Vue d'ensemble
 
-**Appli Audition** est une application Windows qui mesure en temps réel le niveau sonore (dB(A)) de l'audio envoyé à votre casque ou vos écouteurs. Elle vous aide à surveiller votre exposition sonore pour protéger votre audition contre les dommages irréversibles.
+**HearSense** est une application Windows qui mesure en temps réel le niveau sonore (dB(A)) de l'audio envoyé à votre casque ou vos écouteurs. Elle vous aide à surveiller votre exposition sonore pour protéger votre audition contre les dommages irréversibles.
 
 ### Pourquoi cette application ?
 
@@ -65,20 +65,20 @@ Cette application capture le signal audio système via WASAPI loopback, applique
 
 ```bash
 # Depuis le dossier du projet
-cd "C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\bin\Debug\net8.0-windows"
-# Double-cliquez sur ApplAudition.exe
+cd "C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows"
+# Double-cliquez sur HearSense.exe
 ```
 
 ### Option 2 : Version portable (distribution)
 
-1. Téléchargez `ApplAudition_portable.zip` depuis les [Releases](https://github.com/votreRepo/ApplAudition/releases)
+1. Téléchargez `HearSense_portable.zip` depuis les [Releases](https://github.com/votreRepo/HearSense/releases)
 2. Extrayez le contenu où vous voulez (Bureau, Documents, clé USB...)
-3. Double-cliquez sur `ApplAudition.exe`
+3. Double-cliquez sur `HearSense.exe`
 4. Aucune installation nécessaire !
 
 ### Option 3 : Installer avec MSIX (Windows Store)
 
-1. Téléchargez `ApplAudition.msix` depuis les [Releases](https://github.com/votreRepo/ApplAudition/releases)
+1. Téléchargez `HearSense.msix` depuis les [Releases](https://github.com/votreRepo/HearSense/releases)
 2. Double-cliquez sur le fichier .msix
 3. Cliquez sur "Installer"
 4. Lancez depuis le menu Démarrer
@@ -92,7 +92,7 @@ cd "C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\bin\Debug\net8.0-w
 1. **Configurez votre casque dans Windows**
    - Paramètres → Son → Sélectionnez votre casque comme périphérique de sortie
 
-2. **Lancez ApplAudition.exe**
+2. **Lancez HearSense.exe**
    - L'application démarre automatiquement la mesure
 
 3. **Jouez de l'audio**
@@ -204,7 +204,7 @@ L'estimation a une marge d'erreur typique de **±5-8 dB**.
 **Solutions** :
 1. Fermez les applications audio gourmandes (DAW, streaming)
 2. Vérifiez la config minimale (2 cores, 4 GB RAM)
-3. Consultez les logs : `%LOCALAPPDATA%\ApplAudition\logs\`
+3. Consultez les logs : `%LOCALAPPDATA%\HearSense\logs\`
 
 ### Puis-je utiliser l'application avec des haut-parleurs ?
 
@@ -280,13 +280,13 @@ Les contributions sont les bienvenues !
 - **GUIDE_UTILISATEUR.md** : Guide détaillé pour l'utilisateur final (installation, utilisation, dépannage)
 - **BUILD.md** : Instructions de compilation (portable, MSIX, Visual Studio)
 - **CLAUDE.md** : Architecture complète et plan d'implémentation (développeurs)
-- **ApplAudition.Tests/README.md** : Documentation des tests unitaires
+- **HearSense.Tests/README.md** : Documentation des tests unitaires
 
 ---
 
 ## 📝 License
 
-**MIT License** - Copyright (c) 2025 Appli Audition Contributors
+**MIT License** - Copyright (c) 2025 HearSense Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

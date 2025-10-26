@@ -1,4 +1,4 @@
-# 📊 Rapport d'Analyse Approfondie - ApplAudition
+﻿# 📊 Rapport d'Analyse Approfondie - HearSense
 
 **Date** : 26 octobre 2025
 **Version analysée** : V1.567
@@ -8,7 +8,7 @@
 
 ## Vue d'ensemble
 
-Votre projet **ApplAudition** est une application WPF .NET 8 ambitieuse et globalement bien conçue. L'architecture MVVM est respectée, le code est documenté, et vous avez mis en place des tests unitaires. Cependant, plusieurs points nécessitent des améliorations pour garantir la **sécurité**, la **performance**, et la **robustesse** en production.
+Votre projet **HearSense** est une application WPF .NET 8 ambitieuse et globalement bien conçue. L'architecture MVVM est respectée, le code est documenté, et vous avez mis en place des tests unitaires. Cependant, plusieurs points nécessitent des améliorations pour garantir la **sécurité**, la **performance**, et la **robustesse** en production.
 
 ---
 
@@ -554,11 +554,11 @@ public class TrayController : ITrayController
 **Solution recommandée** : Créer une classe `AudioConstants.cs`
 
 ```csharp
-// Créer : ApplAudition/Constants/AudioConstants.cs
-namespace ApplAudition.Constants;
+// Créer : HearSense/Constants/AudioConstants.cs
+namespace HearSense.Constants;
 
 /// <summary>
-/// Constantes audio et DSP pour l'application ApplAudition.
+/// Constantes audio et DSP pour l'application HearSense.
 /// </summary>
 public static class AudioConstants
 {
@@ -994,19 +994,19 @@ private double _b0_s3, _b1_s3, _b2_s3, _a1_s3, _a2_s3;
 ### 1. **Hardcoded Strings et Chemins**
 
 **Exemples** :
-- `App.xaml.cs:30` : Chemin `"ApplAudition", "logs", "app-.log"` hardcodé
-- `StartupManager.cs:14` : `APP_NAME = "ApplAudition"` hardcodé
+- `App.xaml.cs:30` : Chemin `"HearSense", "logs", "app-.log"` hardcodé
+- `StartupManager.cs:14` : `APP_NAME = "HearSense"` hardcodé
 - `NotificationManager.cs:110` : Chemin icône hardcodé
 
 **Solution recommandée** : Créer `AppConstants.cs`
 ```csharp
-// Créer : ApplAudition/Constants/AppConstants.cs
-namespace ApplAudition.Constants;
+// Créer : HearSense/Constants/AppConstants.cs
+namespace HearSense.Constants;
 
 public static class AppConstants
 {
-    public const string APP_NAME = "ApplAudition";
-    public const string APP_DISPLAY_NAME = "Appli Audition";
+    public const string APP_NAME = "HearSense";
+    public const string APP_DISPLAY_NAME = "HearSense";
 
     // Chemins
     public static readonly string AppDataFolder = Path.Combine(
@@ -1115,7 +1115,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File(
         path: System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ApplAudition", "logs", "app-.log"),
+            "HearSense", "logs", "app-.log"),
         rollingInterval: RollingInterval.Day,
         retainedFileCountLimit: 10,
         fileSizeLimitBytes: 10_485_760) // 10 MB
@@ -1140,12 +1140,12 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Is(logLevel)
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) // Réduire logs Microsoft
     .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning) // Réduire logs System
-    .Enrich.WithProperty("Application", "ApplAudition")
+    .Enrich.WithProperty("Application", "HearSense")
     .Enrich.WithProperty("Version", "1.567")
     .WriteTo.File(
         path: System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ApplAudition", "logs", "app-.log"),
+            "HearSense", "logs", "app-.log"),
         rollingInterval: RollingInterval.Day,
         retainedFileCountLimit: 10,
         fileSizeLimitBytes: 10_485_760, // 10 MB
@@ -1163,7 +1163,7 @@ Log.Information("Application démarrée - Niveau de log : {LogLevel}", logLevel)
 
 **Code actuel** :
 ```csharp
-string tooltip = $"Appli Audition - {currentDbA:F0} dB(A) ({categoryText})";
+string tooltip = $"HearSense - {currentDbA:F0} dB(A) ({categoryText})";
 
 // Tronquer si nécessaire (limite Windows)
 if (tooltip.Length > 63)
@@ -1179,7 +1179,7 @@ if (tooltip.Length > 63)
 // Windows limite les tooltips NotifyIcon à 63 caractères (64 avec null terminator)
 const int MAX_TOOLTIP_LENGTH = 63;
 
-string tooltip = $"Appli Audition - {currentDbA:F0} dB(A) ({categoryText})";
+string tooltip = $"HearSense - {currentDbA:F0} dB(A) ({categoryText})";
 
 // Tronquer proprement si dépassement
 if (tooltip.Length > MAX_TOOLTIP_LENGTH)
@@ -1429,7 +1429,7 @@ public class NotificationManager : INotificationManager
 
 ## 📝 Conclusion
 
-Votre projet **ApplAudition** démontre une bonne maîtrise de WPF, de l'architecture MVVM, et des concepts DSP avancés. Le pipeline audio est techniquement solide, bien documenté, et les tests unitaires couvrent les parties critiques.
+Votre projet **HearSense** démontre une bonne maîtrise de WPF, de l'architecture MVVM, et des concepts DSP avancés. Le pipeline audio est techniquement solide, bien documenté, et les tests unitaires couvrent les parties critiques.
 
 **Cependant**, plusieurs **problèmes critiques de sécurité et de performance** doivent être résolus avant une release en production :
 

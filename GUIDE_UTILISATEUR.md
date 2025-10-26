@@ -1,12 +1,12 @@
-# Guide Utilisateur - Appli Audition
+﻿# Guide Utilisateur - HearSense
 
 > **Surveillez le niveau sonore de votre casque en temps réel pour protéger votre audition**
 
 ---
 
-## Qu'est-ce qu'Appli Audition ?
+## Qu'est-ce qu'HearSense ?
 
-Appli Audition est une application Windows qui mesure en temps réel le niveau sonore (en dB(A)) de l'audio envoyé à votre casque ou vos écouteurs. Elle vous aide à surveiller votre exposition sonore pour éviter les dommages auditifs irréversibles.
+HearSense est une application Windows qui mesure en temps réel le niveau sonore (en dB(A)) de l'audio envoyé à votre casque ou vos écouteurs. Elle vous aide à surveiller votre exposition sonore pour éviter les dommages auditifs irréversibles.
 
 **Ce que fait l'application :**
 - ✅ Mesure le niveau sonore en temps réel (mise à jour toutes les 125ms)
@@ -29,8 +29,8 @@ Appli Audition est une application Windows qui mesure en temps réel le niveau s
 Si vous avez déjà le dossier du projet :
 
 1. Ouvrez l'Explorateur Windows
-2. Naviguez vers : `C:\Users\lumin\Documents\Code\Appli Audition\ApplAudition\bin\Debug\net8.0-windows\`
-3. Double-cliquez sur **ApplAudition.exe**
+2. Naviguez vers : `C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows\`
+3. Double-cliquez sur **HearSense.exe**
 
 **Astuce** : Créez un raccourci sur le Bureau pour y accéder rapidement !
 
@@ -39,7 +39,7 @@ Si vous avez déjà le dossier du projet :
 Si vous avez un fichier .zip :
 
 1. Extrayez le contenu du .zip où vous voulez (Bureau, Documents, clé USB...)
-2. Double-cliquez sur **ApplAudition.exe**
+2. Double-cliquez sur **HearSense.exe**
 3. Aucune installation nécessaire !
 
 ### Méthode 3 : Ligne de commande
@@ -47,8 +47,8 @@ Si vous avez un fichier .zip :
 Si vous êtes développeur :
 
 ```powershell
-cd "C:\Users\lumin\Documents\Code\Appli Audition"
-dotnet run --project ApplAudition\ApplAudition.csproj
+cd "C:\Users\lumin\Documents\Code\HearSense"
+dotnet run --project HearSense\HearSense.csproj
 ```
 
 **Prérequis** : .NET 8 Desktop Runtime installé ([Télécharger ici](https://dotnet.microsoft.com/download/dotnet/8.0))
@@ -67,7 +67,7 @@ dotnet run --project ApplAudition\ApplAudition.csproj
 
 ### Démarrer l'application
 
-1. **Lancez ApplAudition.exe**
+1. **Lancez HearSense.exe**
 2. L'application démarre automatiquement la mesure
 3. **Jouez de l'audio** (musique, vidéo, jeux...)
 4. **Observez la jauge** bouger en temps réel
@@ -206,7 +206,7 @@ Consultez un médecin ORL si vous ressentez :
 **Solutions** :
 1. Fermez les autres applications audio gourmandes (DAW, streaming)
 2. Vérifiez que votre PC répond aux prérequis (2 cores, 4 GB RAM minimum)
-3. Consultez les logs : `%LOCALAPPDATA%\ApplAudition\logs\`
+3. Consultez les logs : `%LOCALAPPDATA%\HearSense\logs\`
 
 ---
 
@@ -243,7 +243,7 @@ Le thème est sauvegardé automatiquement entre les sessions.
 
 Les logs sont enregistrés dans :
 ```
-C:\Users\<VotreNom>\AppData\Local\ApplAudition\logs\
+C:\Users\<VotreNom>\AppData\Local\HearSense\logs\
 ```
 
 **Utilité** : Déboguer les problèmes, vérifier la détection du périphérique
@@ -252,7 +252,7 @@ C:\Users\<VotreNom>\AppData\Local\ApplAudition\logs\
 
 Les paramètres (thème, seuils personnalisés) sont dans :
 ```
-C:\Users\<VotreNom>\AppData\Local\ApplAudition\settings.json
+C:\Users\<VotreNom>\AppData\Local\HearSense\settings.json
 ```
 
 ---
@@ -260,12 +260,12 @@ C:\Users\<VotreNom>\AppData\Local\ApplAudition\settings.json
 ## Désinstallation
 
 **Version portable** :
-1. Supprimez le dossier contenant ApplAudition.exe
-2. (Optionnel) Supprimez `%LOCALAPPDATA%\ApplAudition\`
+1. Supprimez le dossier contenant HearSense.exe
+2. (Optionnel) Supprimez `%LOCALAPPDATA%\HearSense\`
 
 **Version installée (.msix)** :
 1. **Paramètres Windows** → **Applications**
-2. Recherchez "Appli Audition"
+2. Recherchez "HearSense"
 3. Cliquez sur **Désinstaller**
 
 ---
@@ -281,7 +281,7 @@ C:\Users\<VotreNom>\AppData\Local\ApplAudition\settings.json
 ### Support
 
 - **GitHub Issues** : Signaler un bug ou suggérer une fonctionnalité
-- **Logs** : Consultez `%LOCALAPPDATA%\ApplAudition\logs\` pour diagnostiquer
+- **Logs** : Consultez `%LOCALAPPDATA%\HearSense\logs\` pour diagnostiquer
 
 ---
 

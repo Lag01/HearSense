@@ -1,4 +1,4 @@
-# Appli Audition - Application d'estimation du niveau sonore au casque
+﻿# HearSense - Application d'estimation du niveau sonore au casque
 
 > **Application Windows .NET 8 WPF** pour estimation du niveau dB(A) au casque **sans saisie utilisateur obligatoire**, avec profils heuristiques auto-sélectionnés et approche conservatrice.
 
@@ -652,7 +652,7 @@ Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile
   - Selection profil
   - Erreurs capture audio
   - Calibration
-- Emplacement: %LOCALAPPDATA%\ApplAudition\logs
+- Emplacement: %LOCALAPPDATA%\HearSense\logs
 
 **Dépendances**: Tâche 1
 
@@ -757,7 +757,7 @@ Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile
 **Points techniques**:
 ```xml
 <!-- Package.appxmanifest -->
-<Identity Name="ApplAudition" Publisher="CN=..." Version="1.0.0.0" />
+<Identity Name="HearSense" Publisher="CN=..." Version="1.0.0.0" />
 <Capabilities>
   <Capability Name="internetClient" />
 </Capabilities>
@@ -781,7 +781,7 @@ Timestamp,dBFS,dB(A),Leq_1min,Peak,Mode,Profile
 - ou PublishSingleFile=true (gros exe unique)
 - Inclure profiles.json
 - Créer .zip avec:
-  - ApplAudition.exe
+  - HearSense.exe
   - Dépendances (.dll)
   - README.txt (instructions)
 - Test extraction + run sur machine clean

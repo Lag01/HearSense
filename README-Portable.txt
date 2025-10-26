@@ -1,5 +1,5 @@
-====================================
-  APPLI AUDITION - VERSION PORTABLE
+﻿====================================
+  HearSense - VERSION PORTABLE
 ====================================
 
 Version : 1.0.0
@@ -11,9 +11,9 @@ INSTALLATION
 ============
 
 1. Extraire tout le contenu de l'archive .zip dans un dossier de votre choix
-   (ex: C:\Programs\ApplAudition ou une clé USB)
+   (ex: C:\Programs\HearSense ou une clé USB)
 
-2. Double-cliquer sur ApplAudition.exe pour lancer l'application
+2. Double-cliquer sur HearSense.exe pour lancer l'application
 
 3. Aucune installation supplémentaire requise (.NET 8 est embarqué)
 
@@ -115,31 +115,31 @@ Durée d'exposition maximale selon le niveau :
 FICHIERS DE L'APPLICATION
 =========================
 
-ApplAudition.exe    : Exécutable principal (self-contained)
+HearSense.exe    : Exécutable principal (self-contained)
 README.txt          : Ce fichier
 
 Logs (créés au runtime) :
-%LOCALAPPDATA%\ApplAudition\logs\app-YYYYMMDD.log
+%LOCALAPPDATA%\HearSense\logs\app-YYYYMMDD.log
 
 Settings (créés au runtime) :
-%LOCALAPPDATA%\ApplAudition\settings.json
+%LOCALAPPDATA%\HearSense\settings.json
 
 
 DÉSINSTALLATION
 ===============
 
-Supprimer simplement le dossier contenant ApplAudition.exe.
+Supprimer simplement le dossier contenant HearSense.exe.
 
 Optionnel : Supprimer les données utilisateur dans :
-%LOCALAPPDATA%\ApplAudition\
+%LOCALAPPDATA%\HearSense\
 
 
 SUPPORT
 =======
 
 - Documentation complète : Voir README.md (GitHub)
-- Issues / Bugs         : https://github.com/votreRepo/ApplAudition/issues
-- Discussions           : https://github.com/votreRepo/ApplAudition/discussions
+- Issues / Bugs         : https://github.com/votreRepo/HearSense/issues
+- Discussions           : https://github.com/votreRepo/HearSense/discussions
 
 
 FAQ RAPIDE
@@ -155,7 +155,7 @@ R : Ouvrez les Paramètres et ajustez les curseurs pour les seuils
 
 Q : L'application consomme trop de CPU ?
 R : Vérifiez qu'aucune autre application audio intensive ne tourne.
-    Consultez les logs dans %LOCALAPPDATA%\ApplAudition\logs
+    Consultez les logs dans %LOCALAPPDATA%\HearSense\logs
 
 Q : Puis-je utiliser l'application avec des haut-parleurs ?
 R : Oui, mais l'estimation SPL sera très imprécise (distance, acoustique).
@@ -168,7 +168,7 @@ R : Oui, 100% offline. Aucune connexion réseau, aucune donnée envoyée.
 LICENSE
 =======
 
-MIT License - Copyright (c) 2025 Appli Audition Contributors
+MIT License - Copyright (c) 2025 HearSense Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

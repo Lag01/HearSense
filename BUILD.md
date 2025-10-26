@@ -1,4 +1,4 @@
-# Guide de build - Appli Audition
+﻿# Guide de build - HearSense
 
 Ce document explique comment construire les différentes versions de l'application.
 
@@ -23,8 +23,8 @@ Ce document explique comment construire les différentes versions de l'applicati
 Le script va :
 1. Nettoyer les builds précédents
 2. Compiler en mode Release self-contained
-3. Créer un fichier unique `ApplAudition.exe`
-4. Créer l'archive `Build\ApplAudition_1.0.0_portable.zip`
+3. Créer un fichier unique `HearSense.exe`
+4. Créer l'archive `Build\HearSense_1.0.0_portable.zip`
 
 ### Paramètres optionnels
 
@@ -48,17 +48,17 @@ Si le script PowerShell ne fonctionne pas, vous pouvez construire manuellement :
 ### 1. Ouvrir un terminal
 
 ```cmd
-cd "C:\Users\lumin\Documents\Code\Appli Audition"
+cd "C:\Users\lumin\Documents\Code\HearSense"
 ```
 
 ### 2. Publier l'application
 
 ```cmd
-dotnet publish ApplAudition\ApplAudition.csproj ^
+dotnet publish HearSense\HearSense.csproj ^
     --configuration Release ^
     --runtime win-x64 ^
     --self-contained true ^
-    --output Build\Portable\ApplAudition ^
+    --output Build\Portable\HearSense ^
     /p:PublishSingleFile=true ^
     /p:IncludeNativeLibrariesForSelfExtract=true ^
     /p:EnableCompressionInSingleFile=true ^
@@ -69,13 +69,13 @@ dotnet publish ApplAudition\ApplAudition.csproj ^
 ### 3. Copier le README
 
 ```cmd
-copy README-Portable.txt Build\Portable\ApplAudition\README.txt
+copy README-Portable.txt Build\Portable\HearSense\README.txt
 ```
 
 ### 4. Créer l'archive .zip
 
 ```powershell
-Compress-Archive -Path "Build\Portable\ApplAudition\*" -DestinationPath "Build\ApplAudition_1.0.0_portable.zip" -CompressionLevel Optimal
+Compress-Archive -Path "Build\Portable\HearSense\*" -DestinationPath "Build\HearSense_1.0.0_portable.zip" -CompressionLevel Optimal
 ```
 
 ---
@@ -91,17 +91,17 @@ Compress-Archive -Path "Build\Portable\ApplAudition\*" -DestinationPath "Build\A
 
 #### 1. Créer le projet MSIX Packaging
 
-1. Ouvrir `ApplAudition.sln` dans Visual Studio 2022
+1. Ouvrir `HearSense.sln` dans Visual Studio 2022
 2. Clic droit sur la solution → "Add" → "New Project"
 3. Choisir "Windows Application Packaging Project"
-4. Nom : `ApplAudition.Package`
+4. Nom : `HearSense.Package`
 5. Version minimale : Windows 10, version 1809
 
 #### 2. Référencer le projet principal
 
-1. Dans `ApplAudition.Package`, clic droit sur "Applications"
-2. "Add Reference..." → Cocher `ApplAudition`
-3. Définir `ApplAudition.Package` comme projet de démarrage
+1. Dans `HearSense.Package`, clic droit sur "Applications"
+2. "Add Reference..." → Cocher `HearSense`
+3. Définir `HearSense.Package` comme projet de démarrage
 
 #### 3. Configurer Package.appxmanifest
 
@@ -109,12 +109,12 @@ Ouvrir `Package.appxmanifest` et configurer :
 
 ```xml
 <Identity
-  Name="ApplAudition"
+  Name="HearSense"
   Publisher="CN=VotreNom"
   Version="1.0.0.0" />
 
 <Properties>
-  <DisplayName>Appli Audition</DisplayName>
+  <DisplayName>HearSense</DisplayName>
   <PublisherDisplayName>Votre Nom</PublisherDisplayName>
   <Logo>Images\StoreLogo.png</Logo>
   <Description>Estimation du niveau sonore au casque</Description>
@@ -134,7 +134,7 @@ Ouvrir `Package.appxmanifest` et configurer :
 ```powershell
 # Dans Visual Studio : Projet → Properties → Signing → "Create Test Certificate"
 # OU en ligne de commande :
-New-SelfSignedCertificate -Type Custom -Subject "CN=VotreNom" -KeyUsage DigitalSignature -FriendlyName "Appli Audition Dev" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+New-SelfSignedCertificate -Type Custom -Subject "CN=VotreNom" -KeyUsage DigitalSignature -FriendlyName "HearSense Dev" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
 ```
 
 #### 5. Builder le package MSIX
@@ -142,13 +142,13 @@ New-SelfSignedCertificate -Type Custom -Subject "CN=VotreNom" -KeyUsage DigitalS
 **Dans Visual Studio** :
 1. Configuration : Release
 2. Platform : x64
-3. Clic droit sur `ApplAudition.Package` → "Publish" → "Create App Packages"
+3. Clic droit sur `HearSense.Package` → "Publish" → "Create App Packages"
 4. Choisir "Sideloading" (pas de Microsoft Store)
 5. Suivre l'assistant
 
 **En ligne de commande** :
 ```cmd
-msbuild ApplAudition.Package\ApplAudition.Package.wapproj ^
+msbuild HearSense.Package\HearSense.Package.wapproj ^
   /p:Configuration=Release ^
   /p:Platform=x64 ^
   /p:AppxBundle=Always ^
@@ -159,7 +159,7 @@ msbuild ApplAudition.Package\ApplAudition.Package.wapproj ^
 
 Le package MSIX sera créé dans :
 ```
-ApplAudition.Package\AppPackages\ApplAudition.Package_1.0.0.0_x64_Test\ApplAudition.Package_1.0.0.0_x64.msix
+HearSense.Package\AppPackages\HearSense.Package_1.0.0.0_x64_Test\HearSense.Package_1.0.0.0_x64.msix
 ```
 
 ---
@@ -168,11 +168,11 @@ ApplAudition.Package\AppPackages\ApplAudition.Package_1.0.0.0_x64_Test\ApplAudit
 
 Pour tester rapidement :
 
-1. Ouvrir `ApplAudition.sln` dans Visual Studio 2022
+1. Ouvrir `HearSense.sln` dans Visual Studio 2022
 2. Configuration : **Release** (ou Debug pour dev)
 3. Platform : **x64**
 4. Build → Build Solution (Ctrl+Shift+B)
-5. L'exécutable sera dans : `ApplAudition\bin\Release\net8.0-windows\`
+5. L'exécutable sera dans : `HearSense\bin\Release\net8.0-windows\`
 
 **Note** : Cette version nécessite .NET 8 Runtime installé sur la machine cible.
 
@@ -182,8 +182,8 @@ Pour tester rapidement :
 
 ### Build portable (.zip)
 
-1. Extraire `ApplAudition_1.0.0_portable.zip`
-2. Lancer `ApplAudition.exe`
+1. Extraire `HearSense_1.0.0_portable.zip`
+2. Lancer `HearSense.exe`
 3. Vérifier :
    - ✅ Application démarre sans erreur
    - ✅ Pas de demande d'installation .NET
@@ -325,7 +325,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: ApplAudition-Portable
+        name: HearSense-Portable
         path: Build/*.zip
 ```
 
@@ -334,8 +334,8 @@ jobs:
 ## Support
 
 Pour toute question ou problème de build :
-- **Issues** : [GitHub Issues](https://github.com/votreRepo/ApplAudition/issues)
-- **Discussions** : [GitHub Discussions](https://github.com/votreRepo/ApplAudition/discussions)
+- **Issues** : [GitHub Issues](https://github.com/votreRepo/HearSense/issues)
+- **Discussions** : [GitHub Discussions](https://github.com/votreRepo/HearSense/discussions)
 
 ---
 

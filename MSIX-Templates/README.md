@@ -1,4 +1,4 @@
-# Templates MSIX pour Appli Audition
+﻿# Templates MSIX pour HearSense
 
 Ce dossier contient les templates et ressources nécessaires pour créer un package MSIX (installer Windows).
 
@@ -24,24 +24,24 @@ Ce dossier contient les templates et ressources nécessaires pour créer un pack
 
 ### 1. Créer le projet MSIX Packaging dans Visual Studio
 
-1. Ouvrir `ApplAudition.sln` dans Visual Studio 2022
+1. Ouvrir `HearSense.sln` dans Visual Studio 2022
 2. Clic droit sur la solution → "Add" → "New Project"
 3. Rechercher "Windows Application Packaging Project"
-4. Nom : `ApplAudition.Package`
+4. Nom : `HearSense.Package`
 5. Location : Dossier racine de la solution
 6. Version minimale : Windows 10, version 1809 (Build 17763)
 7. Cliquer "Create"
 
 ### 2. Référencer le projet principal
 
-1. Dans le projet `ApplAudition.Package`, clic droit sur "Applications"
+1. Dans le projet `HearSense.Package`, clic droit sur "Applications"
 2. "Add Reference..."
-3. Cocher `ApplAudition`
+3. Cocher `HearSense`
 4. Cliquer "OK"
 
 ### 3. Configurer le manifeste
 
-1. Dans `ApplAudition.Package`, ouvrir `Package.appxmanifest`
+1. Dans `HearSense.Package`, ouvrir `Package.appxmanifest`
 2. Remplacer le contenu par celui de `MSIX-Templates\Package.appxmanifest`
 3. Adapter les valeurs :
    - `Publisher` : Votre nom ou organisation
@@ -50,7 +50,7 @@ Ce dossier contient les templates et ressources nécessaires pour créer un pack
 
 ### 4. Ajouter les assets visuels
 
-Créer les images suivantes dans `ApplAudition.Package\Images\` :
+Créer les images suivantes dans `HearSense.Package\Images\` :
 
 | Fichier | Taille | Description |
 |---------|--------|-------------|
@@ -65,21 +65,21 @@ Créer les images suivantes dans `ApplAudition.Package\Images\` :
 ### 5. Créer un certificat de test
 
 Dans Visual Studio :
-1. Projet `ApplAudition.Package` → Properties → Signing
+1. Projet `HearSense.Package` → Properties → Signing
 2. "Choose Certificate..." → "Create Test Certificate..."
 3. Laisser le mot de passe vide (dev uniquement)
 4. Cliquer "OK"
 
 **Ou** en PowerShell :
 ```powershell
-New-SelfSignedCertificate -Type Custom -Subject "CN=ApplAudition" -KeyUsage DigitalSignature -FriendlyName "Appli Audition Dev Certificate" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+New-SelfSignedCertificate -Type Custom -Subject "CN=HearSense" -KeyUsage DigitalSignature -FriendlyName "HearSense Dev Certificate" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
 ```
 
 ### 6. Builder le package
 
 1. Configuration : **Release**
 2. Platform : **x64**
-3. Clic droit sur `ApplAudition.Package` → "Publish" → "Create App Packages..."
+3. Clic droit sur `HearSense.Package` → "Publish" → "Create App Packages..."
 4. Choisir "Sideloading" (installation locale, pas Microsoft Store)
 5. Cocher "Enable automatic updates" (optionnel)
 6. Sélectionner architecture : x64 (ou x64 + ARM64 pour support complet)
@@ -89,12 +89,12 @@ New-SelfSignedCertificate -Type Custom -Subject "CN=ApplAudition" -KeyUsage Digi
 
 Le package MSIX sera créé dans :
 ```
-ApplAudition.Package\AppPackages\ApplAudition.Package_1.0.0.0_x64_Test\
+HearSense.Package\AppPackages\HearSense.Package_1.0.0.0_x64_Test\
 ```
 
 Fichiers générés :
-- `ApplAudition.Package_1.0.0.0_x64.msix` : Package d'installation
-- `ApplAudition.Package_1.0.0.0_x64.cer` : Certificat (à installer si auto-signé)
+- `HearSense.Package_1.0.0.0_x64.msix` : Package d'installation
+- `HearSense.Package_1.0.0.0_x64.cer` : Certificat (à installer si auto-signé)
 - `Install.ps1` : Script d'installation automatique
 
 ---
@@ -103,7 +103,7 @@ Fichiers générés :
 
 ### Sur la machine de développement
 
-Double-cliquer sur `ApplAudition.Package_1.0.0.0_x64.msix`
+Double-cliquer sur `HearSense.Package_1.0.0.0_x64.msix`
 
 Windows peut demander :
 1. "Voulez-vous installer cette application ?" → Cliquer "Installer"
@@ -112,7 +112,7 @@ Windows peut demander :
 ### Sur une autre machine (certificat auto-signé)
 
 1. **Installer le certificat** :
-   - Clic droit sur `ApplAudition.Package_1.0.0.0_x64.cer`
+   - Clic droit sur `HearSense.Package_1.0.0.0_x64.cer`
    - "Install Certificate"
    - "Local Machine" → "Next"
    - "Place all certificates in the following store" → "Browse..."
@@ -180,7 +180,7 @@ Pour enregistrer un protocole custom (ex: `appliaudition://`) :
 <Extensions>
   <uap:Extension Category="windows.protocol">
     <uap:Protocol Name="appliaudition">
-      <uap:DisplayName>Appli Audition Protocol</uap:DisplayName>
+      <uap:DisplayName>HearSense Protocol</uap:DisplayName>
     </uap:Protocol>
   </uap:Extension>
 </Extensions>
@@ -210,7 +210,7 @@ Dans le fichier .wapproj :
 1. Désinstaller l'application via "Ajouter/Supprimer des programmes"
 2. Nettoyer le cache :
    ```powershell
-   Get-AppxPackage *ApplAudition* | Remove-AppxPackage
+   Get-AppxPackage *HearSense* | Remove-AppxPackage
    ```
 3. Rebuilder et réinstaller
 
@@ -237,20 +237,20 @@ Dans le fichier .wapproj :
 ## Structure du projet MSIX final
 
 ```
-ApplAudition.Package/
+HearSense.Package/
 ├── Package.appxmanifest              # Manifeste du package
-├── ApplAudition.Package.wapproj      # Fichier projet (généré par VS)
+├── HearSense.Package.wapproj      # Fichier projet (généré par VS)
 ├── Images/                           # Assets visuels
 │   ├── Square44x44Logo.png
 │   ├── Square150x150Logo.png
 │   ├── Wide310x150Logo.png
 │   ├── StoreLogo.png
 │   └── SplashScreen.png
-├── ApplAudition.Package_TemporaryKey.pfx  # Certificat de test (ne pas commiter)
+├── HearSense.Package_TemporaryKey.pfx  # Certificat de test (ne pas commiter)
 └── AppPackages/                      # Packages générés (ignoré par git)
-    └── ApplAudition.Package_1.0.0.0_x64_Test/
-        ├── ApplAudition.Package_1.0.0.0_x64.msix
-        ├── ApplAudition.Package_1.0.0.0_x64.cer
+    └── HearSense.Package_1.0.0.0_x64_Test/
+        ├── HearSense.Package_1.0.0.0_x64.msix
+        ├── HearSense.Package_1.0.0.0_x64.cer
         └── Install.ps1
 ```
 
