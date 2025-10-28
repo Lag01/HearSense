@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "wEqmDglVP0k=",
+  "dgSpecHash": "JtKgF6I71BI=",
   "success": true,
   "projectFilePath": "C:\\Users\\lumin\\Documents\\Code\\HearSense\\HearSense\\HearSense.csproj",
   "expectedPackageFiles": [
@@ -38,11 +38,8 @@
     "C:\\Users\\lumin\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.20\\microsoft.netcore.app.ref.8.0.20.nupkg.sha512",
-    "C:\\Users\\lumin\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.20\\microsoft.netcore.app.runtime.win-x64.8.0.20.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.20\\microsoft.windowsdesktop.app.ref.8.0.20.nupkg.sha512",
-    "C:\\Users\\lumin\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.20\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.20.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.20\\microsoft.aspnetcore.app.ref.8.0.20.nupkg.sha512",
-    "C:\\Users\\lumin\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.20\\microsoft.aspnetcore.app.runtime.win-x64.8.0.20.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.20\\microsoft.netcore.app.host.win-x64.8.0.20.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.19041.57\\microsoft.windows.sdk.net.ref.10.0.19041.57.nupkg.sha512"
   ],

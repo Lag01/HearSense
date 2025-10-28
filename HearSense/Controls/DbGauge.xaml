@@ -110,12 +110,6 @@
                 Padding="14,8"
                 Background="{Binding CategoryBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 CornerRadius="8">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="8"
-                                ShadowDepth="2"
-                                Opacity="0.16"
-                                Color="Black"/>
-            </Border.Effect>
             <TextBlock Text="{Binding CategoryText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                        FontSize="14"
                        FontWeight="SemiBold"

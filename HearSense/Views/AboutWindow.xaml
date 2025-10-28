@@ -8,7 +8,7 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="30" Background="{StaticResource BackgroundBrush}">
+    <Grid Margin="30" Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -24,18 +24,18 @@
             <TextBlock Text="HearSense"
                        FontSize="32"
                        FontWeight="Bold"
-                       Foreground="{StaticResource PrimaryTextBrush}"
+                       Foreground="{DynamicResource PrimaryTextBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,5"/>
             <TextBlock Text="Surveillance du niveau sonore au casque"
                        FontSize="14"
                        FontStyle="Italic"
-                       Foreground="{StaticResource SecondaryTextBrush}"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,10"/>
             <TextBlock Text="Version 1.6"
                        FontSize="12"
-                       Foreground="{StaticResource SecondaryTextBrush}"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
                        HorizontalAlignment="Center"/>
         </StackPanel>
 
@@ -43,16 +43,16 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <!-- Créateur -->
-                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                <Border Style="{DynamicResource CardStyle}" Margin="0,0,0,15">
                     <StackPanel>
                         <TextBlock Text="👤 Créateur"
                                    FontSize="16"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="0,0,0,10"/>
                         <TextBlock Text="Erwan GUEZINGAR"
                                    FontSize="14"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="0,0,0,5"/>
                     </StackPanel>
                 </Border>
@@ -89,16 +89,16 @@
                 </Border>
 
                 <!-- Description -->
-                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                <Border Style="{DynamicResource CardStyle}" Margin="0,0,0,15">
                     <StackPanel>
                         <TextBlock Text="📋 Description"
                                    FontSize="16"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="0,0,0,10"/>
                         <TextBlock TextWrapping="Wrap"
                                    FontSize="12"
-                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
                                    LineHeight="18">
                             HearSense mesure en temps réel le niveau sonore (dB(A)) de l'audio envoyé à votre casque.
                             L'application utilise la pondération A (norme IEC 61672:2003) pour simuler la sensibilité
@@ -111,16 +111,16 @@
                 </Border>
 
                 <!-- Technologies -->
-                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                <Border Style="{DynamicResource CardStyle}" Margin="0,0,0,15">
                     <StackPanel>
                         <TextBlock Text="🔧 Technologies utilisées"
                                    FontSize="16"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="0,0,0,10"/>
                         <TextBlock TextWrapping="Wrap"
                                    FontSize="12"
-                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
                                    LineHeight="18">
                             • .NET 8 WPF<LineBreak/>
                             • NAudio (Capture audio WASAPI)<LineBreak/>
@@ -132,16 +132,16 @@
                 </Border>
 
                 <!-- Licence -->
-                <Border Style="{StaticResource CardStyle}">
+                <Border Style="{DynamicResource CardStyle}">
                     <StackPanel>
                         <TextBlock Text="📜 Licence"
                                    FontSize="16"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
                                    Margin="0,0,0,10"/>
                         <TextBlock Text="Logiciel open source"
                                    FontSize="12"
-                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                                   Foreground="{DynamicResource SecondaryTextBrush}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
