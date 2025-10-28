@@ -13,7 +13,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
-    <Grid Margin="25">
+    <Grid Margin="25" Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -24,219 +24,256 @@
         <!-- En-tête -->
         <TextBlock Grid.Row="0"
                    Text="Paramètres"
-                   FontSize="24"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,20"/>
+                   FontSize="28"
+                   FontWeight="Bold"
+                   Foreground="{StaticResource PrimaryTextBrush}"
+                   Margin="0,0,0,24"/>
 
         <!-- ScrollViewer pour le contenu -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
                 <!-- Section 1 : Limite critique -->
-                <Expander Header="Limite critique" IsExpanded="True" Margin="0,0,0,15">
-                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
-                        <StackPanel>
-                            <!-- Seuil critique avec Slider + TextBox -->
-                            <TextBlock Text="Seuil critique (dB(A))" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <Expander Header="Limite critique" IsExpanded="True" Margin="0,0,0,16" Style="{StaticResource ModernExpander}">
+                    <StackPanel Margin="0,16,0,0">
+                        <!-- Seuil critique avec Slider + TextBox -->
+                        <TextBlock Text="Seuil critique (dB(A))"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,12"/>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Slider Grid.Column="0"
-                                        Minimum="40"
-                                        Maximum="120"
-                                        TickFrequency="5"
-                                        IsSnapToTickEnabled="True"
-                                        Value="{Binding CriticalThresholdDbA, Mode=TwoWay}"
-                                        VerticalAlignment="Center"
-                                        Margin="0,0,15,0"/>
+                            <Slider Grid.Column="0"
+                                    Style="{StaticResource ModernSlider}"
+                                    Minimum="40"
+                                    Maximum="120"
+                                    TickFrequency="5"
+                                    IsSnapToTickEnabled="True"
+                                    Value="{Binding CriticalThresholdDbA, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,15,0"/>
 
-                                <TextBox Grid.Column="1"
-                                         Text="{Binding CriticalThresholdDbA, Mode=TwoWay, StringFormat=F0}"
-                                         Width="60"
-                                         FontSize="14"
-                                         FontWeight="Bold"
-                                         HorizontalContentAlignment="Center"
-                                         VerticalContentAlignment="Center"
-                                         Height="30"/>
-                            </Grid>
+                            <TextBox Grid.Column="1"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding CriticalThresholdDbA, Mode=TwoWay, StringFormat=F0}"
+                                     Width="70"
+                                     FontSize="14"
+                                     FontWeight="Bold"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     Height="36"/>
+                        </Grid>
 
-                            <!-- Recommandations OMS/française -->
-                            <Border Background="#E3F2FD" CornerRadius="6" Padding="12" Margin="0,15,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="📋 Recommandations OMS/française"
-                                               FontWeight="SemiBold"
-                                               Foreground="#1976D2"
-                                               Margin="0,0,0,8"/>
+                        <!-- Recommandations OMS/française -->
+                        <Border Background="{StaticResource InfoBackgroundBrush}"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,16,0,0">
+                            <StackPanel>
+                                <TextBlock Text="📋 Recommandations OMS/française"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource PrimaryDarkBrush}"
+                                           FontSize="14"
+                                           Margin="0,0,0,10"/>
 
-                                    <TextBlock Text="Exposition maximale recommandée :"
-                                               FontSize="12"
-                                               Foreground="#424242"
-                                               Margin="0,0,0,5"/>
+                                <TextBlock Text="Exposition maximale recommandée :"
+                                           FontSize="12"
+                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                           Margin="0,0,0,8"/>
 
-                                    <TextBlock FontSize="12" Foreground="#424242" Margin="5,0,0,0">
-                                        <Run Text="• 85 dB(A) → 8 heures maximum"/><LineBreak/>
-                                        <Run Text="• 88 dB(A) → 4 heures maximum"/><LineBreak/>
-                                        <Run Text="• 91 dB(A) → 2 heures maximum"/><LineBreak/>
-                                        <Run Text="• 94 dB(A) → 1 heure maximum"/><LineBreak/>
-                                        <Run Text="• 97 dB(A) → 30 minutes maximum"/>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Border>
+                                <TextBlock FontSize="12"
+                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                           Margin="8,0,0,0"
+                                           LineHeight="20">
+                                    <Run Text="• 85 dB(A) → 8 heures maximum"/><LineBreak/>
+                                    <Run Text="• 88 dB(A) → 4 heures maximum"/><LineBreak/>
+                                    <Run Text="• 91 dB(A) → 2 heures maximum"/><LineBreak/>
+                                    <Run Text="• 94 dB(A) → 1 heure maximum"/><LineBreak/>
+                                    <Run Text="• 97 dB(A) → 30 minutes maximum"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </Expander>
 
                 <!-- Section 2 : Notifications -->
-                <Expander Header="Notifications" IsExpanded="True" Margin="0,0,0,15">
-                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
-                        <StackPanel>
-                            <!-- Activer notifications -->
-                            <CheckBox Content="Activer les notifications de dépassement"
-                                      IsChecked="{Binding EnableNotifications, Mode=TwoWay}"
-                                      FontWeight="SemiBold"
-                                      Margin="0,0,0,15"/>
+                <Expander Header="Notifications" IsExpanded="True" Margin="0,0,0,16" Style="{StaticResource ModernExpander}">
+                    <StackPanel Margin="0,16,0,0">
+                        <!-- Activer notifications -->
+                        <CheckBox Content="Activer les notifications de dépassement"
+                                  Style="{StaticResource ModernCheckBox}"
+                                  IsChecked="{Binding EnableNotifications, Mode=TwoWay}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,20"/>
 
-                            <!-- Cooldown -->
-                            <TextBlock Text="Intervalle minimal entre notifications (minutes)"
-                                       Margin="0,0,0,10"/>
+                        <!-- Cooldown -->
+                        <TextBlock Text="Intervalle minimal entre notifications (minutes)"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,12"/>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Slider Grid.Column="0"
-                                        Minimum="1"
-                                        Maximum="30"
-                                        TickFrequency="1"
-                                        IsSnapToTickEnabled="True"
-                                        Value="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
-                                        VerticalAlignment="Center"
-                                        Margin="0,0,15,0"
-                                        IsEnabled="{Binding EnableNotifications}"/>
-
-                                <TextBox Grid.Column="1"
-                                         Text="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
-                                         Width="60"
-                                         HorizontalContentAlignment="Center"
-                                         VerticalContentAlignment="Center"
-                                         Height="30"
-                                         IsEnabled="{Binding EnableNotifications}"/>
-                            </Grid>
-
-                            <!-- Notification unique -->
-                            <CheckBox Content="Une seule notification par session"
-                                      IsChecked="{Binding NotificationShowOncePerSession, Mode=TwoWay}"
-                                      Margin="0,15,0,15"
-                                      IsEnabled="{Binding EnableNotifications}"/>
-
-                            <!-- Bouton test -->
-                            <Button Content="🔔 Tester la notification"
-                                    Command="{Binding TestNotificationCommand}"
-                                    HorizontalAlignment="Left"
-                                    Padding="12,6"
+                            <Slider Grid.Column="0"
+                                    Style="{StaticResource ModernSlider}"
+                                    Minimum="1"
+                                    Maximum="30"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Value="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,15,0"
                                     IsEnabled="{Binding EnableNotifications}"/>
-                        </StackPanel>
-                    </Border>
+
+                            <TextBox Grid.Column="1"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
+                                     Width="70"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     Height="36"
+                                     IsEnabled="{Binding EnableNotifications}"/>
+                        </Grid>
+
+                        <!-- Notification unique -->
+                        <CheckBox Content="Une seule notification par session"
+                                  Style="{StaticResource ModernCheckBox}"
+                                  IsChecked="{Binding NotificationShowOncePerSession, Mode=TwoWay}"
+                                  Margin="0,20,0,20"
+                                  IsEnabled="{Binding EnableNotifications}"/>
+
+                        <!-- Bouton test -->
+                        <Button Command="{Binding TestNotificationCommand}"
+                                Style="{StaticResource ModernButtonSecondary}"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding EnableNotifications}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21"
+                                      Fill="{StaticResource PrimaryTextBrush}"
+                                      Width="16"
+                                      Height="16"
+                                      Stretch="Uniform"
+                                      Margin="0,0,8,0"/>
+                                <TextBlock Text="Tester la notification" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </Expander>
 
                 <!-- Section 3 : Protection automatique du volume -->
-                <Expander Header="Protection automatique du volume" IsExpanded="True" Margin="0,0,0,15">
-                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
-                        <StackPanel>
-                            <!-- Activer la protection -->
-                            <CheckBox Content="Réduire automatiquement le volume si le seuil est dépassé"
-                                      IsChecked="{Binding IsAutoVolumeProtectionEnabled, Mode=TwoWay}"
-                                      FontWeight="SemiBold"
-                                      Margin="0,0,0,15"/>
+                <Expander Header="Protection automatique du volume" IsExpanded="True" Margin="0,0,0,16" Style="{StaticResource ModernExpander}">
+                    <StackPanel Margin="0,16,0,0">
+                        <!-- Activer la protection -->
+                        <CheckBox Content="Réduire automatiquement le volume si le seuil est dépassé"
+                                  Style="{StaticResource ModernCheckBox}"
+                                  IsChecked="{Binding IsAutoVolumeProtectionEnabled, Mode=TwoWay}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,20"/>
 
-                            <!-- Seuil de protection avec Slider + TextBox -->
-                            <TextBlock Text="Seuil de déclenchement (dB(A))"
-                                       Margin="0,0,0,10"
-                                       IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
+                        <!-- Seuil de protection avec Slider + TextBox -->
+                        <TextBlock Text="Seuil de déclenchement (dB(A))"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,12"
+                                   IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Slider Grid.Column="0"
-                                        Minimum="70"
-                                        Maximum="95"
-                                        TickFrequency="5"
-                                        IsSnapToTickEnabled="True"
-                                        Value="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay}"
-                                        VerticalAlignment="Center"
-                                        Margin="0,0,15,0"
-                                        IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
+                            <Slider Grid.Column="0"
+                                    Style="{StaticResource ModernSlider}"
+                                    Minimum="70"
+                                    Maximum="95"
+                                    TickFrequency="5"
+                                    IsSnapToTickEnabled="True"
+                                    Value="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,15,0"
+                                    IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
 
-                                <TextBox Grid.Column="1"
-                                         Text="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay, StringFormat=F0}"
-                                         Width="60"
-                                         FontSize="14"
-                                         FontWeight="Bold"
-                                         HorizontalContentAlignment="Center"
-                                         VerticalContentAlignment="Center"
-                                         Height="30"
-                                         IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
-                            </Grid>
+                            <TextBox Grid.Column="1"
+                                     Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay, StringFormat=F0}"
+                                     Width="70"
+                                     FontSize="14"
+                                     FontWeight="Bold"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     Height="36"
+                                     IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
+                        </Grid>
 
-                            <!-- Explication -->
-                            <Border Background="#FFF3E0" CornerRadius="6" Padding="12" Margin="0,15,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="ℹ️ Comment ça fonctionne ?"
-                                               FontWeight="SemiBold"
-                                               Foreground="#F57C00"
-                                               Margin="0,0,0,8"/>
+                        <!-- Explication -->
+                        <Border Background="{StaticResource WarningBackgroundBrush}"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,16,0,0">
+                            <StackPanel>
+                                <TextBlock Text="ℹ️ Comment ça fonctionne ?"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource WarningBrush}"
+                                           FontSize="14"
+                                           Margin="0,0,0,10"/>
 
-                                    <TextBlock FontSize="12" Foreground="#424242" TextWrapping="Wrap">
-                                        <Run Text="Lorsque le niveau sonore détecté dépasse le seuil configuré, l'application réduit automatiquement le volume système Windows pour ramener le niveau sonore à un niveau sûr."/><LineBreak/><LineBreak/>
-                                        <Run Text="⚠️ Cette protection s'applique toutes les 5 secondes maximum pour éviter les ajustements trop fréquents."/>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
+                                <TextBlock FontSize="12"
+                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                           TextWrapping="Wrap"
+                                           LineHeight="20">
+                                    <Run Text="Lorsque le niveau sonore détecté dépasse le seuil configuré, l'application réduit automatiquement le volume système Windows pour ramener le niveau sonore à un niveau sûr."/><LineBreak/><LineBreak/>
+                                    <Run Text="⚠️ Cette protection s'applique toutes les 5 secondes maximum pour éviter les ajustements trop fréquents."/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
 
-                            <!-- Bouton de test -->
-                            <Button Content="🧪 Tester la protection automatique"
-                                    Command="{Binding TestAutoProtectionCommand}"
-                                    HorizontalAlignment="Left"
-                                    Padding="12,6"
-                                    Margin="0,15,0,0"
-                                    Background="#4CAF50"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    IsEnabled="{Binding IsAutoVolumeProtectionEnabled}">
-                                <Button.ToolTip>
-                                    <TextBlock Text="Simule un niveau sonore élevé pour déclencher la protection et vérifier que les notifications fonctionnent."/>
-                                </Button.ToolTip>
-                            </Button>
-                        </StackPanel>
-                    </Border>
+                        <!-- Bouton de test -->
+                        <Button Command="{Binding TestAutoProtectionCommand}"
+                                Style="{StaticResource ModernButton}"
+                                HorizontalAlignment="Left"
+                                Margin="0,16,0,0"
+                                Background="{StaticResource AccentBrush}"
+                                IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"
+                                ToolTip="Simule un niveau sonore élevé pour tester la protection">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="M7,2V13H10V22L17,10H13L17,2H7Z"
+                                      Fill="White"
+                                      Width="16"
+                                      Height="16"
+                                      Stretch="Uniform"
+                                      Margin="0,0,8,0"/>
+                                <TextBlock Text="Tester la protection" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </Expander>
 
                 <!-- Section 4 : Comportement -->
-                <Expander Header="Comportement" IsExpanded="True" Margin="0,0,0,15">
-                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
-                        <StackPanel>
-                            <CheckBox Content="Démarrer avec Windows"
-                                      IsChecked="{Binding StartWithWindows, Mode=TwoWay}"
-                                      Margin="0,0,0,12"/>
+                <Expander Header="Comportement" IsExpanded="True" Margin="0,0,0,16" Style="{StaticResource ModernExpander}">
+                    <StackPanel Margin="0,16,0,0">
+                        <CheckBox Content="Démarrer avec Windows"
+                                  Style="{StaticResource ModernCheckBox}"
+                                  IsChecked="{Binding StartWithWindows, Mode=TwoWay}"
+                                  Margin="0,0,0,16"/>
 
-                            <CheckBox Content="Démarrer minimisé dans le system tray"
-                                      IsChecked="{Binding StartMinimized, Mode=TwoWay}"
-                                      Margin="0,0,0,12"
-                                      IsEnabled="{Binding StartWithWindows}"/>
+                        <CheckBox Content="Démarrer minimisé dans le system tray"
+                                  Style="{StaticResource ModernCheckBox}"
+                                  IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                                  Margin="0,0,0,16"
+                                  IsEnabled="{Binding StartWithWindows}"/>
 
-                            <CheckBox Content="Minimiser vers le tray à la fermeture"
-                                      IsChecked="{Binding MinimizeToTrayOnClose, Mode=TwoWay}"/>
-                        </StackPanel>
-                    </Border>
+                        <CheckBox Content="Minimiser vers le tray à la fermeture"
+                                  Style="{StaticResource ModernCheckBox}"
+                                  IsChecked="{Binding MinimizeToTrayOnClose, Mode=TwoWay}"/>
+                    </StackPanel>
                 </Expander>
 
             </StackPanel>
@@ -247,8 +284,8 @@
                    Text="{Binding StatusMessage}"
                    FontStyle="Italic"
                    FontSize="12"
-                   Foreground="Gray"
-                   Margin="0,10,0,10"
+                   Foreground="{StaticResource SecondaryTextBrush}"
+                   Margin="0,16,0,16"
                    TextWrapping="Wrap"
                    MinHeight="20"/>
 
@@ -256,19 +293,14 @@
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Annuler"
                     Command="{Binding CancelCommand}"
-                    Padding="20,8"
-                    Margin="0,0,10,0"
-                    Background="Transparent"
-                    BorderBrush="LightGray"
-                    BorderThickness="1"/>
+                    Style="{StaticResource ModernButtonSecondary}"
+                    Padding="24,10"
+                    Margin="0,0,12,0"/>
 
             <Button Content="Enregistrer"
                     Command="{Binding SaveSettingsCommand}"
-                    Padding="20,8"
-                    Background="#2196F3"
-                    Foreground="White"
-                    BorderThickness="0"
-                    FontWeight="SemiBold"/>
+                    Style="{StaticResource ModernButton}"
+                    Padding="24,10"/>
         </StackPanel>
     </Grid>
 </Window>

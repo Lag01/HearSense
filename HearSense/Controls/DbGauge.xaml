@@ -15,10 +15,11 @@
         <!-- Label supérieur -->
         <TextBlock Grid.Row="0"
                    Text="{Binding ModeLabel, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                   FontSize="14"
-                   Foreground="Gray"
+                   FontSize="13"
+                   FontWeight="Medium"
+                   Foreground="{StaticResource SecondaryTextBrush}"
                    HorizontalAlignment="Center"
-                   Margin="0,0,0,10"/>
+                   Margin="0,0,0,12"/>
 
         <!-- Jauge principale -->
         <Grid Grid.Row="1">
@@ -30,19 +31,25 @@
             <!-- Barre de progression stylisée -->
             <Border x:Name="GaugeBarContainer"
                     Grid.Column="0"
-                    Background="#F0F0F0"
-                    CornerRadius="10"
-                    MinHeight="50"
-                    MaxHeight="65"
+                    Background="{StaticResource SecondaryBackgroundBrush}"
+                    CornerRadius="12"
+                    MinHeight="56"
+                    MaxHeight="72"
                     Margin="0,0,20,0"
                     ClipToBounds="True">
                 <Grid>
-                    <!-- Barre colorée animée -->
+                    <!-- Barre colorée animée avec effet glow -->
                     <Border x:Name="GaugeBar"
                             Background="{Binding CategoryBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            CornerRadius="10"
+                            CornerRadius="12"
                             HorizontalAlignment="Left"
                             Width="{Binding GaugeWidth, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12"
+                                            ShadowDepth="0"
+                                            Opacity="0.4"
+                                            Color="{Binding CategoryBrush.Color, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        </Border.Effect>
                         <Border.RenderTransform>
                             <TranslateTransform x:Name="GaugeTransform"/>
                         </Border.RenderTransform>
@@ -85,25 +92,39 @@
             <StackPanel Grid.Column="1"
                         VerticalAlignment="Center">
                 <TextBlock Text="{Binding ValueText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                           FontSize="36"
+                           FontSize="42"
                            FontWeight="Bold"
-                           Foreground="{Binding CategoryBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                           Foreground="{Binding CategoryBrush, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="8"
+                                        ShadowDepth="0"
+                                        Opacity="0.2"
+                                        Color="{Binding CategoryBrush.Color, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    </TextBlock.Effect>
+                </TextBlock>
                 <TextBlock Text="dB(A)"
-                           FontSize="14"
-                           Foreground="Gray"
-                           HorizontalAlignment="Center"/>
+                           FontSize="13"
+                           FontWeight="Medium"
+                           Foreground="{StaticResource SecondaryTextBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,2,0,0"/>
             </StackPanel>
         </Grid>
 
         <!-- Catégorie d'exposition -->
         <Border Grid.Row="2"
-                Margin="0,10,0,0"
-                Padding="12,8"
+                Margin="0,16,0,0"
+                Padding="16,10"
                 Background="{Binding CategoryBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                CornerRadius="6"
-                Opacity="0.9">
+                CornerRadius="8">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="8"
+                                ShadowDepth="2"
+                                Opacity="0.16"
+                                Color="Black"/>
+            </Border.Effect>
             <TextBlock Text="{Binding CategoryText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       FontSize="14"
+                       FontSize="15"
                        FontWeight="SemiBold"
                        Foreground="White"
                        HorizontalAlignment="Center"/>

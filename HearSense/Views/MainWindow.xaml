@@ -14,7 +14,7 @@
         MinWidth="500"
         WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="20">
+    <Grid Margin="20" Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -23,10 +23,11 @@
         </Grid.RowDefinitions>
 
         <!-- En-tête simplifié -->
-        <Grid Grid.Row="0" Margin="0,0,0,20">
+        <Grid Grid.Row="0" Margin="0,0,0,24">
             <TextBlock Text="Niveau sonore"
-                       FontSize="28"
-                       FontWeight="SemiBold"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource PrimaryTextBrush}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
         </Grid>
@@ -62,12 +63,8 @@
 
         <!-- Jauge dB(A) avec code couleur (masquée si enceinte détectée) -->
         <Border Grid.Row="1"
-                BorderBrush="LightGray"
-                BorderThickness="1"
-                CornerRadius="12"
-                Padding="25"
+                Style="{StaticResource CardStyle}"
                 Margin="0,0,0,20"
-                Background="White"
                 Visibility="{Binding IsSpeakerDetected, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
             <StackPanel>
                 <!-- UserControl DbGauge -->
@@ -89,11 +86,7 @@
 
         <!-- Graphe historique LiveCharts2 (masqué si enceinte détectée) -->
         <Border Grid.Row="2"
-                BorderBrush="LightGray"
-                BorderThickness="1"
-                CornerRadius="12"
-                Padding="15"
-                Background="White"
+                Style="{StaticResource CardStyle}"
                 Visibility="{Binding IsSpeakerDetected, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -138,26 +131,44 @@
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
-                <Button Content="⚙️ Paramètres"
-                        Command="{Binding OpenSettingsCommand}"
-                        Padding="12,6"
+                <!-- Bouton Paramètres -->
+                <Button Command="{Binding OpenSettingsCommand}"
+                        Style="{StaticResource ModernButtonSecondary}"
+                        Padding="12,8"
                         Margin="0,0,10,0"
-                        FontSize="12"
-                        Background="Transparent"
-                        BorderThickness="1"
-                        BorderBrush="LightGray"
-                        Cursor="Hand"
-                        ToolTip="Ouvrir les paramètres de l'application"/>
+                        ToolTip="Ouvrir les paramètres">
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Icône SVG Paramètres -->
+                        <Path Data="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10M10,22C9.75,22 9.54,21.82 9.5,21.58L9.13,18.93C8.5,18.68 7.96,18.34 7.44,17.94L4.95,18.95C4.73,19.03 4.46,18.95 4.34,18.73L2.34,15.27C2.21,15.05 2.27,14.78 2.46,14.63L4.57,12.97L4.5,12L4.57,11L2.46,9.37C2.27,9.22 2.21,8.95 2.34,8.73L4.34,5.27C4.46,5.05 4.73,4.96 4.95,5.05L7.44,6.05C7.96,5.66 8.5,5.32 9.13,5.07L9.5,2.42C9.54,2.18 9.75,2 10,2H14C14.25,2 14.46,2.18 14.5,2.42L14.87,5.07C15.5,5.32 16.04,5.66 16.56,6.05L19.05,5.05C19.27,4.96 19.54,5.05 19.66,5.27L21.66,8.73C21.79,8.95 21.73,9.22 21.54,9.37L19.43,11L19.5,12L19.43,13L21.54,14.63C21.73,14.78 21.79,15.05 21.66,15.27L19.66,18.73C19.54,18.95 19.27,19.04 19.05,18.95L16.56,17.95C16.04,18.34 15.5,18.68 14.87,18.93L14.5,21.58C14.46,21.82 14.25,22 14,22H10Z"
+                              Fill="{StaticResource PrimaryTextBrush}"
+                              Width="16"
+                              Height="16"
+                              Stretch="Uniform"
+                              Margin="0,0,8,0"/>
+                        <TextBlock Text="Paramètres"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Button>
 
-                <Button Content="📊 Exporter CSV"
-                        Command="{Binding ExportCsvCommand}"
-                        Padding="12,6"
-                        FontSize="12"
-                        Background="Transparent"
-                        BorderThickness="1"
-                        BorderBrush="LightGray"
-                        Cursor="Hand"
-                        ToolTip="Exporter l'historique vers un fichier CSV"/>
+                <!-- Bouton Export CSV -->
+                <Button Command="{Binding ExportCsvCommand}"
+                        Style="{StaticResource ModernButtonSecondary}"
+                        Padding="12,8"
+                        ToolTip="Exporter l'historique vers CSV">
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Icône SVG Export -->
+                        <Path Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M12,19L8,15H10.5V12H13.5V15H16L12,19Z"
+                              Fill="{StaticResource PrimaryTextBrush}"
+                              Width="16"
+                              Height="16"
+                              Stretch="Uniform"
+                              Margin="0,0,8,0"/>
+                        <TextBlock Text="Exporter CSV"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
     </Grid>
