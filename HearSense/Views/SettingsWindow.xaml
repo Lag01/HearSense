@@ -61,6 +61,7 @@
                             <TextBox Grid.Column="1"
                                      Style="{StaticResource ModernTextBox}"
                                      Text="{Binding CriticalThresholdDbA, Mode=TwoWay, StringFormat=F0}"
+                                     Foreground="{StaticResource TextPrimaryBrush}"
                                      Width="70"
                                      FontSize="14"
                                      FontWeight="Bold"
@@ -136,6 +137,7 @@
                             <TextBox Grid.Column="1"
                                      Style="{StaticResource ModernTextBox}"
                                      Text="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
+                                     Foreground="{StaticResource TextPrimaryBrush}"
                                      Width="70"
                                      HorizontalContentAlignment="Center"
                                      VerticalContentAlignment="Center"
@@ -204,6 +206,7 @@
                             <TextBox Grid.Column="1"
                                      Style="{StaticResource ModernTextBox}"
                                      Text="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay, StringFormat=F0}"
+                                     Foreground="{StaticResource TextPrimaryBrush}"
                                      Width="70"
                                      FontSize="14"
                                      FontWeight="Bold"
@@ -234,25 +237,6 @@
                                 </TextBlock>
                             </StackPanel>
                         </Border>
-
-                        <!-- Bouton de test -->
-                        <Button Command="{Binding TestAutoProtectionCommand}"
-                                Style="{StaticResource ModernButton}"
-                                HorizontalAlignment="Left"
-                                Margin="0,16,0,0"
-                                Background="{StaticResource AccentBrush}"
-                                IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"
-                                ToolTip="Simule un niveau sonore élevé pour tester la protection">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M7,2V13H10V22L17,10H13L17,2H7Z"
-                                      Fill="White"
-                                      Width="16"
-                                      Height="16"
-                                      Stretch="Uniform"
-                                      Margin="0,0,8,0"/>
-                                <TextBlock Text="Tester la protection" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
                     </StackPanel>
                 </Expander>
 

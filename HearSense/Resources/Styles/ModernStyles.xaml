@@ -327,7 +327,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="6"
-                            SnapsToDevicePixels="True">
+                            SnapsToDevicePixels="True"
+                            TextElement.Foreground="{TemplateBinding Foreground}">
                         <ScrollViewer x:Name="PART_ContentHost"
                                     Focusable="False"
                                     HorizontalScrollBarVisibility="Hidden"

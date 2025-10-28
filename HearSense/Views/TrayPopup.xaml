@@ -46,6 +46,7 @@
                               Value="{Binding CurrentDbA}"
                               Category="{Binding ExposureCategory}"
                               ModeLabel="dB(A)"
+                              IsCompact="True"
                               Height="160"
                               Margin="0,5"/>
 

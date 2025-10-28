@@ -34,6 +34,13 @@ public partial class DbGauge : System.Windows.Controls.UserControl
             typeof(DbGauge),
             new PropertyMetadata("dB(A) relatif"));
 
+    public static readonly DependencyProperty IsCompactProperty =
+        DependencyProperty.Register(
+            nameof(IsCompact),
+            typeof(bool),
+            typeof(DbGauge),
+            new PropertyMetadata(false, OnIsCompactChanged));
+
     #endregion
 
     #region Public Properties
@@ -63,6 +70,15 @@ public partial class DbGauge : System.Windows.Controls.UserControl
     {
         get => (string)GetValue(ModeLabelProperty);
         set => SetValue(ModeLabelProperty, value);
+    }
+
+    /// <summary>
+    /// Mode compact pour affichage réduit (ex: widget).
+    /// </summary>
+    public bool IsCompact
+    {
+        get => (bool)GetValue(IsCompactProperty);
+        set => SetValue(IsCompactProperty, value);
     }
 
     #endregion
@@ -219,6 +235,14 @@ public partial class DbGauge : System.Windows.Controls.UserControl
         }
     }
 
+    private static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is DbGauge gauge)
+        {
+            gauge.UpdateCategory(); // Mettre à jour le texte avec le nouveau mode
+        }
+    }
+
     /// <summary>
     /// Met à jour la jauge visuelle (largeur, texte) avec animation fluide.
     /// Calcule la largeur basée sur la largeur réelle du conteneur (responsive).
@@ -248,14 +272,24 @@ public partial class DbGauge : System.Windows.Controls.UserControl
     /// </summary>
     private void UpdateCategory()
     {
-        CategoryText = Category switch
-        {
-            ExposureCategory.Safe => "✓ Niveau sûr",
-            ExposureCategory.Moderate => "⚠ Niveau modéré (limiter exposition)",
-            ExposureCategory.Hazardous => "⚠ Niveau dangereux (risque auditif)",
-            ExposureCategory.Critical => "⛔ NIVEAU CRITIQUE (danger immédiat)",
-            _ => "Inconnu"
-        };
+        // Utiliser texte court si mode compact (widget)
+        CategoryText = IsCompact
+            ? Category switch
+            {
+                ExposureCategory.Safe => "✓ Niveau sûr",
+                ExposureCategory.Moderate => "⚠ Niveau modéré",
+                ExposureCategory.Hazardous => "⚠ Niveau dangereux",
+                ExposureCategory.Critical => "⛔ NIVEAU CRITIQUE",
+                _ => "Inconnu"
+            }
+            : Category switch
+            {
+                ExposureCategory.Safe => "✓ Niveau sûr",
+                ExposureCategory.Moderate => "⚠ Niveau modéré (limiter exposition)",
+                ExposureCategory.Hazardous => "⚠ Niveau dangereux (risque auditif)",
+                ExposureCategory.Critical => "⛔ NIVEAU CRITIQUE (danger immédiat)",
+                _ => "Inconnu"
+            };
 
         CategoryBrush = Category switch
         {
