@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qXIgg2jLdOQ=",
+  "dgSpecHash": "JtKgF6I71BI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\HearSense\\HearSense.csproj",
+  "projectFilePath": "C:\\Users\\lumin\\Documents\\Code\\HearSense\\HearSense\\HearSense.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lumin\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.2\\communitytoolkit.mvvm.8.2.2.nupkg.sha512",
     "C:\\Users\\lumin\\.nuget\\packages\\harfbuzzsharp\\7.3.0\\harfbuzzsharp.7.3.0.nupkg.sha512",

@@ -1607,11 +1607,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\HearSense\\HearSense.csproj",
+      "projectUniqueName": "C:\\Users\\lumin\\Documents\\Code\\HearSense\\HearSense\\HearSense.csproj",
       "projectName": "HearSense",
-      "projectPath": "C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\HearSense\\HearSense.csproj",
+      "projectPath": "C:\\Users\\lumin\\Documents\\Code\\HearSense\\HearSense\\HearSense.csproj",
       "packagesPath": "C:\\Users\\lumin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\lumin\\Documents\\Code\\Appli Audition\\HearSense\\obj\\",
+      "outputPath": "C:\\Users\\lumin\\Documents\\Code\\HearSense\\HearSense\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\lumin\\AppData\\Roaming\\NuGet\\NuGet.Config"

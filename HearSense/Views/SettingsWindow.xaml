@@ -59,15 +59,15 @@
                                     Margin="0,0,15,0"/>
 
                             <TextBox Grid.Column="1"
-                                     Style="{StaticResource ModernTextBox}"
                                      Text="{Binding CriticalThresholdDbA, Mode=TwoWay, StringFormat=F0}"
-                                     Foreground="{StaticResource TextPrimaryBrush}"
                                      Width="70"
                                      FontSize="14"
                                      FontWeight="Bold"
                                      HorizontalContentAlignment="Center"
                                      VerticalContentAlignment="Center"
-                                     Height="36"/>
+                                     Height="36"
+                                     BorderBrush="#E0E0E0"
+                                     BorderThickness="1"/>
                         </Grid>
 
                         <!-- Recommandations OMS/française -->
@@ -135,13 +135,15 @@
                                     IsEnabled="{Binding EnableNotifications}"/>
 
                             <TextBox Grid.Column="1"
-                                     Style="{StaticResource ModernTextBox}"
                                      Text="{Binding NotificationCooldownMinutes, Mode=TwoWay}"
-                                     Foreground="{StaticResource TextPrimaryBrush}"
                                      Width="70"
+                                     FontSize="14"
+                                     FontWeight="Bold"
                                      HorizontalContentAlignment="Center"
                                      VerticalContentAlignment="Center"
                                      Height="36"
+                                     BorderBrush="#E0E0E0"
+                                     BorderThickness="1"
                                      IsEnabled="{Binding EnableNotifications}"/>
                         </Grid>
 
@@ -204,15 +206,15 @@
                                     IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
 
                             <TextBox Grid.Column="1"
-                                     Style="{StaticResource ModernTextBox}"
                                      Text="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay, StringFormat=F0}"
-                                     Foreground="{StaticResource TextPrimaryBrush}"
                                      Width="70"
                                      FontSize="14"
                                      FontWeight="Bold"
                                      HorizontalContentAlignment="Center"
                                      VerticalContentAlignment="Center"
                                      Height="36"
+                                     BorderBrush="#E0E0E0"
+                                     BorderThickness="1"
                                      IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
                         </Grid>
 

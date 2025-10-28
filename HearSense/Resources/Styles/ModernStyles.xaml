@@ -319,6 +319,9 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="10,8"/>
         <Setter Property="FontSize" Value="14"/>
+        <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="SelectionBrush" Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="SelectionOpacity" Value="0.4"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -327,8 +330,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="6"
-                            SnapsToDevicePixels="True"
-                            TextElement.Foreground="{TemplateBinding Foreground}">
+                            SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="PART_ContentHost"
                                     Focusable="False"
                                     HorizontalScrollBarVisibility="Hidden"
