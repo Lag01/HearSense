@@ -6,9 +6,9 @@
         mc:Ignorable="d"
         Title="Paramètres - Appli Audition"
         Icon="/Resources/icon.ico"
-        Height="700"
+        Height="800"
         Width="550"
-        MinHeight="600"
+        MinHeight="700"
         MinWidth="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
@@ -145,7 +145,82 @@
                     </Border>
                 </Expander>
 
-                <!-- Section 3 : Comportement -->
+                <!-- Section 3 : Protection automatique du volume -->
+                <Expander Header="Protection automatique du volume" IsExpanded="True" Margin="0,0,0,15">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
+                        <StackPanel>
+                            <!-- Activer la protection -->
+                            <CheckBox Content="Réduire automatiquement le volume si le seuil est dépassé"
+                                      IsChecked="{Binding IsAutoVolumeProtectionEnabled, Mode=TwoWay}"
+                                      FontWeight="SemiBold"
+                                      Margin="0,0,0,15"/>
+
+                            <!-- Seuil de protection avec Slider + TextBox -->
+                            <TextBlock Text="Seuil de déclenchement (dB(A))"
+                                       Margin="0,0,0,10"
+                                       IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Slider Grid.Column="0"
+                                        Minimum="70"
+                                        Maximum="95"
+                                        TickFrequency="5"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,15,0"
+                                        IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
+
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding VolumeProtectionThresholdDbA, Mode=TwoWay, StringFormat=F0}"
+                                         Width="60"
+                                         FontSize="14"
+                                         FontWeight="Bold"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         Height="30"
+                                         IsEnabled="{Binding IsAutoVolumeProtectionEnabled}"/>
+                            </Grid>
+
+                            <!-- Explication -->
+                            <Border Background="#FFF3E0" CornerRadius="6" Padding="12" Margin="0,15,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="ℹ️ Comment ça fonctionne ?"
+                                               FontWeight="SemiBold"
+                                               Foreground="#F57C00"
+                                               Margin="0,0,0,8"/>
+
+                                    <TextBlock FontSize="12" Foreground="#424242" TextWrapping="Wrap">
+                                        <Run Text="Lorsque le niveau sonore détecté dépasse le seuil configuré, l'application réduit automatiquement le volume système Windows pour ramener le niveau sonore à un niveau sûr."/><LineBreak/><LineBreak/>
+                                        <Run Text="⚠️ Cette protection s'applique toutes les 5 secondes maximum pour éviter les ajustements trop fréquents."/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Bouton de test -->
+                            <Button Content="🧪 Tester la protection automatique"
+                                    Command="{Binding TestAutoProtectionCommand}"
+                                    HorizontalAlignment="Left"
+                                    Padding="12,6"
+                                    Margin="0,15,0,0"
+                                    Background="#4CAF50"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    IsEnabled="{Binding IsAutoVolumeProtectionEnabled}">
+                                <Button.ToolTip>
+                                    <TextBlock Text="Simule un niveau sonore élevé pour déclencher la protection et vérifier que les notifications fonctionnent."/>
+                                </Button.ToolTip>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+                <!-- Section 4 : Comportement -->
                 <Expander Header="Comportement" IsExpanded="True" Margin="0,0,0,15">
                     <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,10,0,0">
                         <StackPanel>

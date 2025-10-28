@@ -29,6 +29,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly ISettingsService _settingsService;
     private readonly IExportService _exportService;
     private readonly INotificationManager _notificationManager;
+    private readonly IAutoVolumeProtectionService _autoVolumeProtectionService;
     private readonly ITrayController _trayController;
     private readonly IServiceProvider _serviceProvider;
     private readonly AudioDeviceChangeNotifier _deviceChangeNotifier;
@@ -123,6 +124,7 @@ public partial class MainViewModel : BaseViewModel
         ISettingsService settingsService,
         IExportService exportService,
         INotificationManager notificationManager,
+        IAutoVolumeProtectionService autoVolumeProtectionService,
         ITrayController trayController,
         AudioDeviceChangeNotifier deviceChangeNotifier,
         IServiceProvider serviceProvider,
@@ -137,6 +139,7 @@ public partial class MainViewModel : BaseViewModel
         _settingsService = settingsService;
         _exportService = exportService;
         _notificationManager = notificationManager;
+        _autoVolumeProtectionService = autoVolumeProtectionService;
         _trayController = trayController;
         _deviceChangeNotifier = deviceChangeNotifier;
         _serviceProvider = serviceProvider;
@@ -404,6 +407,9 @@ public partial class MainViewModel : BaseViewModel
 
             // ÉTAPE 6.5 : Vérifier le seuil critique et notifier si nécessaire
             _notificationManager.CheckThreshold(smoothedSpl);
+
+            // ÉTAPE 6.6 : Protection automatique du volume
+            _autoVolumeProtectionService.MonitorAndProtect(smoothedSpl);
 
             // Incrémenter le compteur de throttling
             _displayThrottleCounter++;

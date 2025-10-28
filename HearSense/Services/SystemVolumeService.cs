@@ -127,6 +127,37 @@ public class SystemVolumeService : ISystemVolumeService, IDisposable
     }
 
     /// <summary>
+    /// Définit le niveau de volume système (0.0 à 1.0).
+    /// </summary>
+    /// <param name="volume">Niveau de volume (0.0 = muet, 1.0 = maximum)</param>
+    public void SetVolume(float volume)
+    {
+        try
+        {
+            if (_volumeEndpoint == null)
+            {
+                _logger.Warning("Volume endpoint non initialisé, impossible de définir le volume");
+                return;
+            }
+
+            // Clamp la valeur entre 0 et 1
+            volume = Math.Clamp(volume, 0.0f, 1.0f);
+
+            // Définir le volume master
+            _volumeEndpoint.MasterVolumeLevelScalar = volume;
+
+            _logger.Information(
+                "Volume système défini à {Volume:P0} ({VolumeDb:F1} dB)",
+                volume,
+                GetVolumeDb());
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors de la définition du volume système");
+        }
+    }
+
+    /// <summary>
     /// Gestionnaire d'événement : le volume système a changé.
     /// </summary>
     private void OnVolumeNotification(AudioVolumeNotificationData data)

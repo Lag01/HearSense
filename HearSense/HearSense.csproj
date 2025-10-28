@@ -26,10 +26,13 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   </ItemGroup>
 
-  <!-- Inclure l'icône comme ressource intégrée ET copier vers le répertoire de sortie -->
+  <!-- Inclure les icônes comme ressources intégrées ET copier vers le répertoire de sortie -->
   <ItemGroup>
     <Resource Include="Resources\icon.ico" />
     <None Include="Resources\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\icon.png" Condition="Exists('Resources\icon.png')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

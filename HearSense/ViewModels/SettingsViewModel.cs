@@ -17,6 +17,7 @@ public partial class SettingsViewModel : BaseViewModel
     private readonly IStartupManager _startupManager;
     private readonly INotificationManager _notificationManager;
     private readonly ITrayController _trayController;
+    private readonly IAutoVolumeProtectionService _autoVolumeProtectionService;
     private readonly ILogger _logger;
 
     #region Propriétés observables
@@ -43,6 +44,12 @@ public partial class SettingsViewModel : BaseViewModel
     private bool _minimizeToTrayOnClose;
 
     [ObservableProperty]
+    private bool _isAutoVolumeProtectionEnabled;
+
+    [ObservableProperty]
+    private float _volumeProtectionThresholdDbA;
+
+    [ObservableProperty]
     private string _statusMessage = "";
 
     #endregion
@@ -52,12 +59,14 @@ public partial class SettingsViewModel : BaseViewModel
         IStartupManager startupManager,
         INotificationManager notificationManager,
         ITrayController trayController,
+        IAutoVolumeProtectionService autoVolumeProtectionService,
         ILogger logger)
     {
         _settingsService = settingsService;
         _startupManager = startupManager;
         _notificationManager = notificationManager;
         _trayController = trayController;
+        _autoVolumeProtectionService = autoVolumeProtectionService;
         _logger = logger;
 
         // Charger les paramètres actuels
@@ -78,6 +87,8 @@ public partial class SettingsViewModel : BaseViewModel
         StartWithWindows = settings.StartWithWindows;
         StartMinimized = settings.StartMinimized;
         MinimizeToTrayOnClose = settings.MinimizeToTrayOnClose;
+        IsAutoVolumeProtectionEnabled = settings.IsAutoVolumeProtectionEnabled;
+        VolumeProtectionThresholdDbA = settings.VolumeProtectionThresholdDbA;
 
         _logger.Debug("Paramètres chargés dans SettingsViewModel");
     }
@@ -136,6 +147,14 @@ public partial class SettingsViewModel : BaseViewModel
                 return;
             }
 
+            // Validation du seuil de protection automatique
+            if (VolumeProtectionThresholdDbA < MIN_REALISTIC_THRESHOLD || VolumeProtectionThresholdDbA > MAX_REALISTIC_THRESHOLD)
+            {
+                StatusMessage = $"⚠ Le seuil de protection automatique doit être entre {MIN_REALISTIC_THRESHOLD} et {MAX_REALISTIC_THRESHOLD} dB(A)";
+                _logger.Warning("Seuil de protection automatique hors limites : {Threshold} dB(A)", VolumeProtectionThresholdDbA);
+                return;
+            }
+
             // Mettre à jour les settings
             var settings = _settingsService.Settings;
             settings.CriticalThresholdDbA = CriticalThresholdDbA;
@@ -145,6 +164,8 @@ public partial class SettingsViewModel : BaseViewModel
             settings.StartWithWindows = StartWithWindows;
             settings.StartMinimized = StartMinimized;
             settings.MinimizeToTrayOnClose = MinimizeToTrayOnClose;
+            settings.IsAutoVolumeProtectionEnabled = IsAutoVolumeProtectionEnabled;
+            settings.VolumeProtectionThresholdDbA = VolumeProtectionThresholdDbA;
 
             // Sauvegarder
             await _settingsService.SaveAsync();
@@ -154,6 +175,9 @@ public partial class SettingsViewModel : BaseViewModel
 
             // Réinitialiser l'état de notification (nouveau seuil)
             _notificationManager.ResetNotificationState();
+
+            // Réinitialiser le cooldown de la protection automatique
+            _autoVolumeProtectionService.ResetCooldown();
 
             StatusMessage = "✓ Paramètres enregistrés avec succès";
             _logger.Information("Paramètres sauvegardés : Seuil={Threshold} dB(A), Notifications={Enabled}",
@@ -200,6 +224,26 @@ public partial class SettingsViewModel : BaseViewModel
         catch (Exception ex)
         {
             _logger.Error(ex, "Erreur lors du test de notification");
+            StatusMessage = $"⚠ Erreur : {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Commande pour tester la protection automatique du volume.
+    /// Simule un niveau sonore élevé pour déclencher la réduction de volume et la notification.
+    /// </summary>
+    [RelayCommand]
+    private void TestAutoProtection()
+    {
+        try
+        {
+            _logger.Information("Commande TestAutoProtection déclenchée depuis l'UI");
+            _autoVolumeProtectionService.TestProtection();
+            StatusMessage = "Test de protection automatique lancé - Vérifiez les logs et le volume système";
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors du test de protection automatique");
             StatusMessage = $"⚠ Erreur : {ex.Message}";
         }
     }

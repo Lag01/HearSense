@@ -3,6 +3,7 @@ using Serilog;
 using System.IO;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using HearSense.Helpers;
 
 namespace HearSense.Services;
 
@@ -24,7 +25,7 @@ public class ToastNotificationService : IToastNotificationService
     /// </summary>
     /// <param name="title">Titre de la notification</param>
     /// <param name="message">Message de la notification</param>
-    /// <param name="iconPath">Chemin absolu vers l'icône à afficher</param>
+    /// <param name="iconPath">Chemin absolu vers l'icône à afficher (préférer PNG)</param>
     public void ShowToast(string title, string message, string? iconPath = null)
     {
         try
@@ -34,44 +35,51 @@ public class ToastNotificationService : IToastNotificationService
                 .AddText(title)
                 .AddText(message);
 
-            // Ajouter l'icône personnalisée si fournie avec validation de sécurité
+            // Ajouter l'icône personnalisée si fournie
             if (!string.IsNullOrEmpty(iconPath))
             {
                 try
                 {
-                    // Valider que le chemin est absolu et dans un répertoire autorisé
-                    var fullPath = Path.GetFullPath(iconPath);
-                    var allowedDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources"));
+                    string fullPath = Path.GetFullPath(iconPath);
 
-                    if (!fullPath.StartsWith(allowedDirectory, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _logger.Warning("Tentative d'accès à un chemin non autorisé : {IconPath}", iconPath);
-                        return;
-                    }
+                    // Vérifier d'abord si une version PNG existe (préféré pour Toast)
+                    string pngPath = Path.ChangeExtension(fullPath, ".png");
+                    string effectivePath = File.Exists(pngPath) ? pngPath : fullPath;
 
-                    if (File.Exists(fullPath))
+                    if (File.Exists(effectivePath))
                     {
-                        var uri = new Uri(fullPath, UriKind.Absolute);
+                        // Créer une URI file:// pour l'icône
+                        var uri = new Uri("file:///" + effectivePath.Replace("\\", "/"), UriKind.Absolute);
                         toastContent.AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Default);
-                        _logger.Debug("Icône personnalisée ajoutée à la notification : {IconPath}", fullPath);
+                        _logger.Debug("Icône personnalisée ajoutée à la notification : {IconPath} (format: {Ext})",
+                            effectivePath, Path.GetExtension(effectivePath));
+                    }
+                    else
+                    {
+                        _logger.Warning("Fichier d'icône introuvable : {IconPath}. Notification affichée sans icône.", fullPath);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warning(ex, "Erreur lors de la validation du chemin de l'icône : {IconPath}", iconPath);
+                    _logger.Warning(ex, "Erreur lors de l'ajout de l'icône : {IconPath}. Notification affichée sans icône.", iconPath);
                 }
             }
 
             // Obtenir le contenu XML
             var toastXml = toastContent.GetToastContent().GetXml();
 
+            // Log du XML pour debugging
+            _logger.Debug("Toast XML : {Xml}", toastXml.GetXml());
+
             // Créer la notification
             var toast = new ToastNotification(toastXml);
 
-            // Afficher la notification via ToastNotificationManager
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
+            // Afficher la notification via ToastNotificationManager avec l'AUMID explicite
+            // Cela permet à Windows de lier correctement la notification à l'application enregistrée
+            ToastNotificationManager.CreateToastNotifier(AppUserModelHelper.APP_USER_MODEL_ID).Show(toast);
 
-            _logger.Information("Notification Toast affichée : {Title}", title);
+            _logger.Information("Notification Toast affichée avec AUMID : {Title} ({AUMID})",
+                title, AppUserModelHelper.APP_USER_MODEL_ID);
         }
         catch (Exception ex)
         {

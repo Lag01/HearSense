@@ -10,7 +10,7 @@ namespace HearSense.Helpers;
 public static class AppUserModelHelper
 {
     // AppUserModelID unique pour l'application
-    private const string APP_USER_MODEL_ID = "LuminDev.ApplAudition.1";
+    public const string APP_USER_MODEL_ID = "LuminDev.HearSense.1";
 
     /// <summary>
     /// Définit l'AppUserModelID du processus actuel.

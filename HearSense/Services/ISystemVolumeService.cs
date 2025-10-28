@@ -18,6 +18,12 @@ public interface ISystemVolumeService
     float GetVolumeDb();
 
     /// <summary>
+    /// Définit le niveau de volume système (0.0 à 1.0).
+    /// </summary>
+    /// <param name="volume">Niveau de volume (0.0 = muet, 1.0 = maximum)</param>
+    void SetVolume(float volume);
+
+    /// <summary>
     /// Événement déclenché lorsque le volume système change.
     /// </summary>
     event EventHandler<VolumeChangedEventArgs>? VolumeChanged;

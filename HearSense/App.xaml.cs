@@ -80,6 +80,12 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IToastNotificationService, ToastNotificationService>();
         services.AddSingleton<INotificationManager, NotificationManager>();
 
+        // Protection automatique du volume
+        services.AddSingleton<IAutoVolumeProtectionService, AutoVolumeProtectionService>();
+
+        // Enregistrement Windows (Toast Notifications avec nom d'app correct)
+        services.AddSingleton<IWindowsRegistrationService, WindowsRegistrationService>();
+
         // ViewModels (Transient - nouvelle instance à chaque résolution)
         services.AddTransient<MainViewModel>();
         services.AddTransient<SettingsViewModel>(); // Fenêtre de paramètres
@@ -157,6 +163,20 @@ public partial class App : System.Windows.Application
             var settingsService = _serviceProvider.GetRequiredService<ISettingsService>();
             await settingsService.LoadAsync();
             Log.Information("Settings chargés");
+
+            // Enregistrer l'application dans Windows pour les Toast Notifications
+            // (Nécessaire pour afficher le bon nom "HearSense" au lieu de l'AUMID)
+            var registrationService = _serviceProvider.GetRequiredService<IWindowsRegistrationService>();
+            if (!registrationService.IsRegistered())
+            {
+                Log.Information("Application non enregistrée dans Windows - Enregistrement en cours...");
+                await registrationService.RegisterApplicationAsync();
+                Log.Information("Application enregistrée avec succès");
+            }
+            else
+            {
+                Log.Debug("Application déjà enregistrée dans Windows");
+            }
 
             // Appliquer le thème Light uniquement
             ApplyLightTheme();

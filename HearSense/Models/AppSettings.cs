@@ -60,4 +60,16 @@ public class AppSettings
     /// Si true, ne notifie qu'une seule fois par session (jusqu'au redémarrage de l'application).
     /// </summary>
     public bool NotificationShowOncePerSession { get; set; } = false;
+
+    /// <summary>
+    /// Indique si la protection automatique du volume est activée.
+    /// Quand activé, le volume système est automatiquement réduit si le niveau sonore dépasse le seuil.
+    /// </summary>
+    public bool IsAutoVolumeProtectionEnabled { get; set; } = false;
+
+    /// <summary>
+    /// Seuil en dB(A) pour déclencher la réduction automatique du volume.
+    /// Défaut : 85 dB(A) (recommandation OMS).
+    /// </summary>
+    public float VolumeProtectionThresholdDbA { get; set; } = 85.0f;
 }
