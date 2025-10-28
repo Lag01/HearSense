@@ -2,9 +2,24 @@
 
 > **Application Windows de surveillance du niveau sonore au casque en temps réel**
 
+**Créé par Erwan GUEZINGAR**
+
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6)](https://www.microsoft.com/windows)
+
+---
+
+## ⚠️ Avertissement important
+
+**Les valeurs affichées par HearSense sont des ESTIMATIONS INDICATIVES uniquement.**
+
+- ❌ Cette application **NE REMPLACE PAS** un sonomètre professionnel certifié
+- ❌ Ne doit **PAS** être utilisée dans un cadre médical ou professionnel réglementé
+- ⚠️ Les mesures peuvent varier selon le casque, le volume, les égaliseurs, etc.
+- ✅ Conçue pour **sensibiliser** aux niveaux sonores et encourager de bonnes pratiques d'écoute
+
+**En cas de doute sur votre audition, consultez un professionnel de la santé auditive.**
 
 ---
 
@@ -59,9 +74,27 @@ Cette application capture le signal audio système via WASAPI loopback, applique
 | **RAM** | 4 GB | 8 GB |
 | **Runtime** | .NET 8 Desktop Runtime | - |
 
-**Installer .NET 8 Desktop Runtime** : [Télécharger ici](https://dotnet.microsoft.com/download/dotnet/8.0)
+**Note** : L'installeur détecte automatiquement si .NET 8 est manquant et propose de l'installer.
 
-### Option 1 : Lancer l'exécutable (développement)
+### Option 1 : Installeur Windows (Recommandé) 🎯
+
+**Pour une installation simple et complète :**
+
+1. Téléchargez `HearSense_1.6_Setup.exe` depuis les [Releases](https://github.com/votreRepo/HearSense/releases)
+2. Double-cliquez sur le fichier pour lancer l'installeur
+3. Suivez l'assistant d'installation (moins de 2 minutes)
+4. L'application apparaît dans le menu Démarrer
+5. Désinstallation facile via Paramètres Windows > Applications
+
+**Avantages** :
+- ✅ Installation en un clic
+- ✅ Détection automatique de .NET 8 Runtime
+- ✅ Raccourcis créés automatiquement
+- ✅ Désinstallation propre via Windows
+
+📖 **Guide détaillé** : Voir [INSTALLATION.md](INSTALLATION.md) pour des instructions complètes
+
+### Option 2 : Lancer l'exécutable (développement)
 
 ```bash
 # Depuis le dossier du projet
@@ -69,14 +102,14 @@ cd "C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows"
 # Double-cliquez sur HearSense.exe
 ```
 
-### Option 2 : Version portable (distribution)
+### Option 3 : Version portable (distribution)
 
 1. Téléchargez `HearSense_portable.zip` depuis les [Releases](https://github.com/votreRepo/HearSense/releases)
 2. Extrayez le contenu où vous voulez (Bureau, Documents, clé USB...)
 3. Double-cliquez sur `HearSense.exe`
 4. Aucune installation nécessaire !
 
-### Option 3 : Installer avec MSIX (Windows Store)
+### Option 4 : Installer avec MSIX (Windows Store)
 
 1. Téléchargez `HearSense.msix` depuis les [Releases](https://github.com/votreRepo/HearSense/releases)
 2. Double-cliquez sur le fichier .msix
@@ -220,6 +253,8 @@ Oui, **100% offline**. Aucune connexion réseau, aucune donnée envoyée.
 - **dB(A)** : Décibels pondérés A - simule la sensibilité de l'oreille humaine
 
 L'application convertit dBFS → dB(A) via pondération A (filtre IEC 61672:2003).
+
+**Note importante** : Le "A" dans dB(A) signifie "**A-weighting**" (pondération A), qui est une norme acoustique internationale. Ce n'est **PAS** lié à un "mode" de l'application. C'est la méthode standard utilisée par tous les sonomètres pour mesurer le bruit tel que perçu par l'oreille humaine.
 
 ---
 

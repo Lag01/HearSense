@@ -72,15 +72,6 @@
                                   Category="{Binding ExposureCategory}"
                                   ModeLabel="dB(A)"
                                   MaxHeight="150"/>
-
-                <!-- Avertissement discret -->
-                <TextBlock Text="Estimation du niveau sonore - Valeur indicative"
-                           FontSize="11"
-                           FontStyle="Italic"
-                           Foreground="Gray"
-                           HorizontalAlignment="Center"
-                           Margin="0,15,0,0"
-                           TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
 
@@ -119,18 +110,39 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Message de statut à gauche -->
+            <!-- Message d'avertissement à gauche -->
             <TextBlock Grid.Column="0"
-                       Text="{Binding StatusMessage}"
                        VerticalAlignment="Center"
-                       FontStyle="Italic"
                        FontSize="11"
-                       Foreground="Gray"/>
+                       Foreground="#E65100"
+                       TextWrapping="Wrap">
+                <Run Text="⚠️ "/><Run FontWeight="SemiBold" Text="Valeurs estimatives uniquement"/><Run Text=" - Ne remplace pas un sonomètre professionnel certifié"/>
+            </TextBlock>
 
             <!-- Boutons à droite -->
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
+                <!-- Bouton À propos -->
+                <Button Command="{Binding OpenAboutCommand}"
+                        Style="{StaticResource ModernButtonSecondary}"
+                        Padding="12,8"
+                        Margin="0,0,10,0"
+                        ToolTip="À propos de HearSense">
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Icône SVG Info -->
+                        <Path Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                              Fill="{StaticResource PrimaryTextBrush}"
+                              Width="16"
+                              Height="16"
+                              Stretch="Uniform"
+                              Margin="0,0,8,0"/>
+                        <TextBlock Text="À propos"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Button>
+
                 <!-- Bouton Paramètres -->
                 <Button Command="{Binding OpenSettingsCommand}"
                         Style="{StaticResource ModernButtonSecondary}"

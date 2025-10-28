@@ -1,0 +1,160 @@
+<Window x:Class="HearSense.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="À propos de HearSense"
+        Icon="/Resources/icon.ico"
+        Height="550"
+        Width="500"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="30" Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- En-tête avec icône et titre -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,30">
+            <Image Source="/Resources/icon.ico"
+                   Width="80"
+                   Height="80"
+                   Margin="0,0,0,20"/>
+            <TextBlock Text="HearSense"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource PrimaryTextBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="Surveillance du niveau sonore au casque"
+                       FontSize="14"
+                       FontStyle="Italic"
+                       Foreground="{StaticResource SecondaryTextBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+            <TextBlock Text="Version 1.6"
+                       FontSize="12"
+                       Foreground="{StaticResource SecondaryTextBrush}"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Contenu principal avec ScrollViewer -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Créateur -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="👤 Créateur"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="Erwan GUEZINGAR"
+                                   FontSize="14"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,5"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Avertissements -->
+                <Border Background="#FFF3E0"
+                        BorderBrush="Orange"
+                        BorderThickness="2"
+                        CornerRadius="8"
+                        Padding="15"
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="⚠️ Avertissements et limitations"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Foreground="OrangeRed"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   FontSize="12"
+                                   Foreground="#E65100"
+                                   LineHeight="18">
+                            <Run Text="• Les valeurs affichées sont des"/><Run FontWeight="Bold" Text=" ESTIMATIONS INDICATIVES"/><Run Text=" uniquement."/>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run Text="• Cette application"/><Run FontWeight="Bold" Text=" NE REMPLACE PAS"/><Run Text=" un sonomètre professionnel certifié."/>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run Text="• Les mesures peuvent varier selon le casque, le volume système, les égaliseurs, etc."/>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run Text="• En cas de doute, consultez un professionnel de la santé auditive."/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Description -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="📋 Description"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   FontSize="12"
+                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   LineHeight="18">
+                            HearSense mesure en temps réel le niveau sonore (dB(A)) de l'audio envoyé à votre casque.
+                            L'application utilise la pondération A (norme IEC 61672:2003) pour simuler la sensibilité
+                            de l'oreille humaine aux différentes fréquences.
+                            <LineBreak/><LineBreak/>
+                            <Run FontWeight="Bold">Note technique :</Run> Le "A" dans dB(A) signifie "A-weighting"
+                            (pondération A), une norme acoustique internationale. Ce n'est pas lié à un "mode" de l'application.
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Technologies -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="🔧 Technologies utilisées"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   FontSize="12"
+                                   Foreground="{StaticResource SecondaryTextBrush}"
+                                   LineHeight="18">
+                            • .NET 8 WPF<LineBreak/>
+                            • NAudio (Capture audio WASAPI)<LineBreak/>
+                            • LiveCharts2 (Graphiques)<LineBreak/>
+                            • CommunityToolkit.Mvvm (Architecture MVVM)<LineBreak/>
+                            • Serilog (Journalisation)
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Licence -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📜 Licence"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryTextBrush}"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="Logiciel open source"
+                                   FontSize="12"
+                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Bouton de fermeture -->
+        <Button Grid.Row="2"
+                Content="Fermer"
+                Width="100"
+                Height="35"
+                HorizontalAlignment="Center"
+                Margin="0,20,0,0"
+                Click="CloseButton_Click"
+                Style="{StaticResource ModernButtonStyle}"/>
+    </Grid>
+</Window>

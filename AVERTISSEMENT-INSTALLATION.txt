@@ -1,0 +1,45 @@
+================================================================================
+                   AVERTISSEMENT IMPORTANT - À LIRE
+================================================================================
+
+HearSense est une application d'ESTIMATION du niveau sonore.
+
+⚠️  LIMITATIONS ET AVERTISSEMENTS :
+
+1. Les valeurs affichées sont des ESTIMATIONS INDICATIVES uniquement.
+
+2. Cette application NE REMPLACE PAS un sonomètre professionnel certifié.
+
+3. Les mesures peuvent varier selon :
+   - Le casque ou les écouteurs utilisés
+   - Le volume système Windows
+   - Les égaliseurs ou effets audio actifs
+   - L'ajustement du casque sur vos oreilles
+
+4. NE vous fiez PAS uniquement à cette application pour protéger votre audition
+   dans un environnement professionnel ou réglementé.
+
+5. En cas de doute, consultez un professionnel de la santé auditive.
+
+================================================================================
+                        UTILISATION RESPONSABLE
+================================================================================
+
+Cette application est conçue pour :
+✓ Vous sensibiliser aux niveaux sonores
+✓ Vous aider à prendre conscience de votre exposition
+✓ Vous encourager à adopter de bonnes pratiques d'écoute
+
+Elle n'est PAS conçue pour :
+✗ Remplacer un équipement de mesure certifié
+✗ Diagnostiquer des problèmes auditifs
+✗ Être utilisée dans un cadre médical ou professionnel réglementé
+
+================================================================================
+
+En installant cette application, vous reconnaissez avoir pris connaissance
+de ces limitations et vous vous engagez à l'utiliser de manière responsable.
+
+Créé par Erwan GUEZINGAR
+
+================================================================================

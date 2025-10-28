@@ -127,3 +127,5 @@ C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.1
 C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense.genruntimeconfig.cache
 C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\ref\HearSense.dll
 C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Resources\Styles\ModernStyles.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\AboutWindow.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\AboutWindow.g.cs

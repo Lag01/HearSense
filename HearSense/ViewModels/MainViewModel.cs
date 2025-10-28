@@ -188,7 +188,6 @@ public partial class MainViewModel : BaseViewModel
 
             await _audioCaptureService.StartAsync();
             IsCapturing = true;
-            StatusMessage = "Analyse en cours...";
 
             // Initialiser le timestamp de début
             _captureStartTime = DateTime.Now;
@@ -203,7 +202,6 @@ public partial class MainViewModel : BaseViewModel
         catch (Exception ex)
         {
             _logger.Error(ex, "Erreur lors du démarrage automatique de la capture");
-            StatusMessage = $"Erreur : {ex.Message}";
         }
     }
 
@@ -292,12 +290,10 @@ public partial class MainViewModel : BaseViewModel
 
                 if (success)
                 {
-                    StatusMessage = $"Export réussi : {ExportHistoryData.Count} lignes → {dialog.FileName}";
                     _logger.Information("Export CSV réussi : {Count} lignes", ExportHistoryData.Count);
                 }
                 else
                 {
-                    StatusMessage = "Erreur lors de l'export CSV";
                     _logger.Warning("L'export CSV a échoué");
                 }
             }
@@ -305,7 +301,6 @@ public partial class MainViewModel : BaseViewModel
         catch (Exception ex)
         {
             _logger.Error(ex, "Erreur lors de l'export CSV");
-            StatusMessage = $"Erreur : {ex.Message}";
         }
     }
 
@@ -331,13 +326,32 @@ public partial class MainViewModel : BaseViewModel
             else
             {
                 _logger.Warning("Impossible de créer SettingsWindow via DI");
-                StatusMessage = "Erreur : Impossible d'ouvrir les paramètres";
             }
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Erreur lors de l'ouverture de la fenêtre de paramètres");
-            StatusMessage = $"Erreur : {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Commande pour ouvrir la fenêtre "À propos".
+    /// </summary>
+    [RelayCommand]
+    private void OpenAbout()
+    {
+        try
+        {
+            var aboutWindow = new Views.AboutWindow
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+            aboutWindow.ShowDialog();
+            _logger.Information("Fenêtre À propos ouverte depuis MainWindow");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Erreur lors de l'ouverture de la fenêtre À propos");
         }
     }
 
@@ -460,7 +474,6 @@ public partial class MainViewModel : BaseViewModel
     private void OnErrorOccurred(object? sender, ErrorEventArgs e)
     {
         _logger.Error(e.Exception, "Erreur de capture audio");
-        StatusMessage = $"Erreur : {e.Exception.Message}";
         IsCapturing = false;
     }
 
@@ -474,12 +487,6 @@ public partial class MainViewModel : BaseViewModel
         {
             _logger.Information("Changement de périphérique audio détecté : {DeviceName}", e.DeviceName);
 
-            // Afficher un message à l'utilisateur
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                StatusMessage = $"Changement de périphérique : {e.DeviceName}...";
-            });
-
             // Afficher notification tray
             _trayController.ShowBalloonTip(
                 "Périphérique audio changé",
@@ -490,22 +497,11 @@ public partial class MainViewModel : BaseViewModel
             // Redémarrer la capture avec le nouveau périphérique
             await _audioCaptureService.RestartAsync();
 
-            // Mettre à jour le statut
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                StatusMessage = $"Périphérique : {e.DeviceName}";
-            });
-
             _logger.Information("Capture redémarrée avec succès après changement de périphérique");
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Erreur lors du changement de périphérique audio");
-
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                StatusMessage = $"Erreur lors du changement de périphérique : {ex.Message}";
-            });
 
             _trayController.ShowBalloonTip(
                 "Erreur",
