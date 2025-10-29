@@ -83,7 +83,12 @@ public partial class TrayPopup : Window
 
             // 3. Afficher la fenêtre (ShowDialog est bloquant)
             _logger.Information("Affichage de SettingsWindow.ShowDialog()...");
+
+            // Forcer la fenêtre au premier plan
+            settingsWindow.Topmost = true;
             settingsWindow.ShowDialog();
+            settingsWindow.Topmost = false; // Retirer après fermeture
+
             _logger.Information("SettingsWindow fermée par l'utilisateur - Succès complet !");
         }
         catch (Exception ex)

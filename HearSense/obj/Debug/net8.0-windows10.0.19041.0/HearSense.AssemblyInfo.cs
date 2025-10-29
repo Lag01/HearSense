@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HearSense")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ebc6347cc42b694bd0d1e0c53d1e633b278c8df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f895ac9f8e872b33ce4c054b51a9a460f078d809")]
 [assembly: System.Reflection.AssemblyProductAttribute("HearSense")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HearSense")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
