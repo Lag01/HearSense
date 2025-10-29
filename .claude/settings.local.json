@@ -12,7 +12,8 @@
       "Bash(git commit:*)",
       "Bash(if not exist \"HearSense\\Resources\\Styles\" mkdir \"HearSense\\Resources\\Styles\")",
       "Bash(git log:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(dotnet clean:*)"
     ],
     "deny": [],
     "ask": []

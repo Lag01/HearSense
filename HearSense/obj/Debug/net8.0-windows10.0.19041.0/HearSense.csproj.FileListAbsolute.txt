@@ -62,6 +62,21 @@ C:\Users\lumin\Documents\Code\Appli Audition\HearSense\obj\Debug\net8.0-windows1
 C:\Users\lumin\Documents\Code\Appli Audition\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense.pdb
 C:\Users\lumin\Documents\Code\Appli Audition\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense.genruntimeconfig.cache
 C:\Users\lumin\Documents\Code\Appli Audition\HearSense\obj\Debug\net8.0-windows10.0.19041.0\ref\HearSense.dll
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense.csproj.AssemblyReference.cache
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Controls\DbGauge.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Resources\Styles\ModernStyles.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Resources\Themes\Light.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\AboutWindow.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\SettingsWindow.baml
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Controls\DbGauge.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\AboutWindow.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\MainWindow.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\SettingsWindow.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\TrayPopup.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\App.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\GeneratedInternalTypeHelper.g.cs
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense_MarkupCompile.cache
+C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense_MarkupCompile.lref
 C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.19041.0\Resources\icon.ico
 C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.19041.0\HearSense.exe
 C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.19041.0\HearSense.deps.json
@@ -99,21 +114,6 @@ C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.1
 C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.19041.0\runtimes\win-x86\native\libSkiaSharp.dll
 C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.19041.0\Microsoft.Windows.SDK.NET.dll
 C:\Users\lumin\Documents\Code\HearSense\HearSense\bin\Debug\net8.0-windows10.0.19041.0\WinRT.Runtime.dll
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense.csproj.AssemblyReference.cache
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Controls\DbGauge.baml
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Resources\Styles\ModernStyles.baml
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Resources\Themes\Light.baml
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\AboutWindow.baml
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\SettingsWindow.baml
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Controls\DbGauge.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\AboutWindow.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\MainWindow.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\SettingsWindow.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\TrayPopup.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\App.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\GeneratedInternalTypeHelper.g.cs
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense_MarkupCompile.cache
-C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\HearSense_MarkupCompile.lref
 C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\App.baml
 C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\MainWindow.baml
 C:\Users\lumin\Documents\Code\HearSense\HearSense\obj\Debug\net8.0-windows10.0.19041.0\Views\TrayPopup.baml

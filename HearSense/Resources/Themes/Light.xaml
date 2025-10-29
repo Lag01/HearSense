@@ -61,23 +61,7 @@
                       Opacity="0"
                       Color="Black"/>
 
-    <DropShadowEffect x:Key="Elevation1"
-                      BlurRadius="4"
-                      ShadowDepth="1"
-                      Opacity="0.12"
-                      Color="Black"/>
-
-    <DropShadowEffect x:Key="Elevation2"
-                      BlurRadius="8"
-                      ShadowDepth="2"
-                      Opacity="0.16"
-                      Color="Black"/>
-
-    <DropShadowEffect x:Key="Elevation3"
-                      BlurRadius="16"
-                      ShadowDepth="4"
-                      Opacity="0.20"
-                      Color="Black"/>
+    <!-- Elevation1, Elevation2, Elevation3 définis dans ModernStyles.xaml -->
 
     <DropShadowEffect x:Key="Elevation4"
                       BlurRadius="24"

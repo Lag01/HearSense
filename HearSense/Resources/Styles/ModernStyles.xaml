@@ -25,7 +25,7 @@
     <!-- ==================== OMBRES (ELEVATION) ==================== -->
 
     <DropShadowEffect x:Key="Elevation1"
-                      BlurRadius="4"
+                      BlurRadius="2"
                       ShadowDepth="1"
                       Opacity="0.12"
                       Color="Black"/>
