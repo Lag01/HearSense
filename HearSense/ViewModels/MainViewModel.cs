@@ -225,7 +225,9 @@ public partial class MainViewModel : BaseViewModel
                 GeometrySize = 0, // Pas de points visibles (ligne continue)
                 LineSmoothness = 0.2, // Légère courbe pour un rendu plus fluide
                 GeometryStroke = null,
-                GeometryFill = null
+                GeometryFill = null,
+                YToolTipLabelFormatter = point =>
+                    $"{(point?.Coordinate.PrimaryValue ?? 0):F0} dB(A)"
             }
         };
 

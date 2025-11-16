@@ -90,7 +90,8 @@
 
             <!-- Valeur numérique -->
             <StackPanel Grid.Column="1"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center"
+                        MinWidth="60">
                 <TextBlock Text="{Binding ValueText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                            FontSize="42"
                            FontWeight="Bold"
